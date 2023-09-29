@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "fraud-detection-system"
+version = "0.1.0"
+description = "This repository contains a robust Machine Learning-based Fraud Detection System designed to identify and flag potentially fraudulent transactions in real-time."
+authors = ["HeberTU <heber.trj.urt@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "fraud_detection_system"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
