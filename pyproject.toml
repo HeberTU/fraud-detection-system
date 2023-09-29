@@ -9,6 +9,7 @@ packages = [{include = "fraud_detection_system"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pandas = "~1.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
