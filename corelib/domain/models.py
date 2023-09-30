@@ -8,6 +8,10 @@ Licence,
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import (
+    List,
+    Optional,
+)
 
 
 @dataclass
@@ -23,6 +27,7 @@ class CustomerProfile:
             transaction amounts for the customer.
         -  mean_nb_tx_per_day: The average number of transactions per day for
             the customer.
+        - available_terminals: List of valid terminals for the customer.
     """
 
     customer_id: int
@@ -31,3 +36,20 @@ class CustomerProfile:
     mean_amount: float
     std_amount: float
     mean_nb_tx_per_day: float
+    available_terminals: Optional[List[int]] = None
+
+
+@dataclass
+class TerminalProfiles:
+    """Represent terminal (point of sale) profiles.
+
+    Each terminal will be defined by the following properties:
+
+        - terminal_id: the terminal unique id.
+        - x_terminal_id,y_terminal_id: A pair of coordinates in a 100 * 100
+            grid, that defines the geographical location of the terminal.
+    """
+
+    terminal_id: int
+    x_terminal_id: float
+    y_terminal_id: float

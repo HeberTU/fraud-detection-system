@@ -12,8 +12,8 @@ from dataclasses import dataclass
 class SyntheticParams:
     """Synthetic data repository parameters."""
 
-    customer_uniform_lower_bound: int
-    customer_uniform_upper_bound: int
+    geo_uniform_lower_bound: int
+    geo_uniform_upper_bound: int
     amount_uniform_lower_bound: int
     amount_uniform_upper_bound: int
     trans_uniform_lower_bound: int
