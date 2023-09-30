@@ -129,7 +129,17 @@ class Synthetic(DataRepository):
             axis=1,
         )
 
-        return customer_profiles_df
+        transactions_df = (
+            customer_profiles_df.groupby("customer_id")
+            .apply(
+                lambda x: domain.generate_transaction_table(
+                    x.iloc[0], start_date=self.start_date, nb_days=self.nb_days
+                )
+            )
+            .reset_index(drop=True)
+        )
+
+        return transactions_df
 
     def preprocess(self, data: pd.DataFrame) -> pd.DataFrame:
         """Preprocess credit card transactional data to fit an ML algorithm.

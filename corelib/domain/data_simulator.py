@@ -193,9 +193,6 @@ def generate_transaction(
             terminals and the simulated hour of the daty falls on the same day.
 
     """
-    random.seed(int(customer_profile.customer_id))
-    np.random.seed(int(customer_profile.customer_id))
-
     # Time of transaction: Around noon, std 20000 seconds. This choice
     # aims at simulating the fact that most transactions occur during
     # the day.
@@ -235,3 +232,57 @@ def generate_transaction(
             )
 
     return None
+
+
+def generate_transaction_table(
+    customer_profile: models.CustomerProfile,
+    start_date: pd.Timestamp,
+    nb_days: int,
+) -> pd.DataFrame:
+    """Generate transaction table.
+
+    Args:
+        customer_profile: models.CustomerProfile
+            Customer profile.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+        nb_days: int
+            Number of days to simulate the data.
+
+    Returns:
+        pd.DataFrame:
+            Transactional data.
+    """
+    customer_transactions = []
+
+    random.seed(int(customer_profile.customer_id))
+    np.random.seed(int(customer_profile.customer_id))
+
+    # For all days
+    for day in range(nb_days):
+
+        # Random number of transactions for that day
+        nb_tx = np.random.poisson(customer_profile.mean_nb_tx_per_day)
+
+        # If nb_tx positive, let us generate transactions
+        if nb_tx <= 0:
+            continue
+
+        for tx in range(nb_tx):
+
+            transaction = generate_transaction(
+                customer_profile=customer_profile,
+                start_date=start_date,
+                day=day,
+            )
+
+            if transaction is None:
+                continue
+
+            customer_transactions.append(transaction)
+
+    customer_transactions = pd.DataFrame.from_records(
+        [ct.__dict__ for ct in customer_transactions]
+    )
+
+    return customer_transactions
