@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-@dataclass(unsafe_hash=True)
+@dataclass
 class CustomerProfile:
     """Represent the customer profile.
 
