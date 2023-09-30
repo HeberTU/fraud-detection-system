@@ -7,11 +7,13 @@ Licence,
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import (
-    List,
-    Optional,
+from dataclasses import (
+    dataclass,
+    field,
 )
+from typing import List
+
+import pandas as pd
 
 
 @dataclass
@@ -36,7 +38,7 @@ class CustomerProfile:
     mean_amount: float
     std_amount: float
     mean_nb_tx_per_day: float
-    available_terminals: Optional[List[int]] = None
+    available_terminals: List[int] = field(default_factory=lambda: [])
 
 
 @dataclass
@@ -53,3 +55,16 @@ class TerminalProfiles:
     terminal_id: int
     x_terminal_id: float
     y_terminal_id: float
+
+
+@dataclass
+class Transaction:
+    """Represent terminal transactions.
+
+    Each transaction will be defined by the following properties.
+    """
+
+    tx_datetime: pd.Timestamp
+    customer_id: int
+    terminal_id: int
+    tx_amount: float

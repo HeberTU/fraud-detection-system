@@ -80,3 +80,48 @@ def test_get_available_terminals_for_customer() -> None:
     )
 
     assert available_terminals == [0, 1]
+
+
+@pytest.mark.unit
+def test_generate_transactions() -> None:
+    """Test generate_transactions."""
+    customer_profile = domain.CustomerProfile(
+        customer_id=0,
+        x_customer_id=71.5189,
+        y_customer_id=60.2763,
+        mean_amount=29.6966,
+        std_amount=14.8483,
+        mean_nb_tx_per_day=2.17953,
+        available_terminals=[2, 4],
+    )
+
+    transaction = domain.generate_transaction(
+        customer_profile=customer_profile,
+        start_date=pd.Timestamp("2023-09-30"),
+        day=1,
+    )
+
+    assert isinstance(transaction, domain.Transaction)
+    assert transaction.tx_amount > 0
+    assert transaction.terminal_id in customer_profile.available_terminals
+
+
+@pytest.mark.unit
+def test_generate_transactions_no_terminals() -> None:
+    """Test generate_transactions_table."""
+    customer_profile = domain.CustomerProfile(
+        customer_id=0,
+        x_customer_id=71.5189,
+        y_customer_id=60.2763,
+        mean_amount=29.6966,
+        std_amount=14.8483,
+        mean_nb_tx_per_day=2.17953,
+    )
+
+    transaction = domain.generate_transaction(
+        customer_profile=customer_profile,
+        start_date=pd.Timestamp("2023-09-30"),
+        day=1,
+    )
+
+    assert transaction is None

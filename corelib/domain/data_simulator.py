@@ -5,9 +5,14 @@ Created on: 30/9/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from typing import List
+import random
+from typing import (
+    List,
+    Optional,
+)
 
 import numpy as np
+import pandas as pd
 from numpy.typing import NDArray
 
 from corelib.domain import models
@@ -164,3 +169,69 @@ def get_available_terminals_for_customer(
     available_terminals = list(np.where(dist_x_y < radius)[0])
 
     return available_terminals
+
+
+def generate_transaction(
+    customer_profile: models.CustomerProfile,
+    start_date: pd.Timestamp,
+    day: int,
+) -> Optional[models.Transaction]:
+    """Generate a random transaction.
+
+    Args:
+        customer_profile: models.CustomerProfile
+            Customer profile.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+        day: int
+            Number of days after the start date from which the transaction will
+            be simulated.
+
+    Returns:
+        Optional[models.Transaction]:
+            Transaction instance in case the customer profile has valid
+            terminals and the simulated hour of the daty falls on the same day.
+
+    """
+    random.seed(int(customer_profile.customer_id))
+    np.random.seed(int(customer_profile.customer_id))
+
+    # Time of transaction: Around noon, std 20000 seconds. This choice
+    # aims at simulating the fact that most transactions occur during
+    # the day.
+    time_tx = int(np.random.normal(86400 / 2, 20000))
+
+    # If transaction time between 0 and 86400 (same day), let us keep
+    # it, otherwise, let us discard it.
+    if (time_tx > 0) and (time_tx < 86400):
+
+        # Amount is drawn from a normal distribution
+        amount = np.random.normal(
+            loc=customer_profile.mean_amount, scale=customer_profile.std_amount
+        )
+
+        # If amount negative, draw from a uniform distribution
+        if amount < 0:
+            amount = np.random.uniform(
+                low=0, high=customer_profile.mean_amount * 2
+            )
+
+        amount = np.round(amount, decimals=2)
+
+        if len(customer_profile.available_terminals) > 0:
+            terminal_id = random.choice(
+                seq=customer_profile.available_terminals
+            )
+
+            return models.Transaction(
+                tx_datetime=(
+                    start_date
+                    + pd.Timedelta(value=day, unit="day")
+                    + pd.Timedelta(value=time_tx, unit="seconds")
+                ),
+                customer_id=customer_profile.customer_id,
+                terminal_id=terminal_id,
+                tx_amount=amount,
+            )
+
+    return None
