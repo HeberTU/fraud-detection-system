@@ -55,4 +55,4 @@ class DataRepositoryFactory:
                 f"{data_repository_type} not implemented"
             )
 
-        return data_repository(**params.__dict__)
+        return data_repository(**params().__dict__)

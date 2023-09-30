@@ -5,16 +5,29 @@ Created on: 30/9/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from dataclasses import dataclass
+from dataclasses import (
+    dataclass,
+    field,
+)
+
+import pandas as pd
 
 
 @dataclass
 class SyntheticParams:
     """Synthetic data repository parameters."""
 
-    geo_uniform_lower_bound: int
-    geo_uniform_upper_bound: int
-    amount_uniform_lower_bound: int
-    amount_uniform_upper_bound: int
-    trans_uniform_lower_bound: int
-    trans_uniform_upper_bound: int
+    n_customers: int = 5
+    n_terminals: int = 10
+    geo_uniform_lower_bound: int = 0
+    geo_uniform_upper_bound: int = 100
+    amount_uniform_lower_bound: int = 5
+    amount_uniform_upper_bound: int = 100
+    trans_uniform_lower_bound: int = 0
+    trans_uniform_upper_bound: int = 4
+    start_date: pd.Timedelta = field(
+        default_factory=lambda: pd.Timestamp("2023-09-30")
+    )
+    nb_days: int = 5
+    radius: float = 35
+    random_state: int = 0
