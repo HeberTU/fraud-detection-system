@@ -75,7 +75,7 @@ def dump_result(obj: object, hash_str: str, prefix: str) -> None:
         prefix: str
             Provide human-readable info on the filename generated.
     """
-    file_name = prefix + "_" + hash_str + ".pickle"
+    file_name = ".cachedir/" + prefix + "_" + hash_str + ".pickle"
     with open(file=file_name, mode="wb") as handle:
         pickle.dump(obj=obj, file=handle, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -93,7 +93,7 @@ def load_from_memory(hash_str: str, prefix: str) -> object:
         object:
             Saved object.
     """
-    file_name = prefix + "_" + hash_str + ".pickle"
+    file_name = ".cachedir/" + prefix + "_" + hash_str + ".pickle"
 
     with open(file=file_name, mode="rb") as handle:
         obj = pickle.load(handle)
