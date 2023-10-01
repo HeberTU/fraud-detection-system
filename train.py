@@ -16,8 +16,10 @@ def main():
     data_repository = DataRepositoryFactory().create(
         data_repository_type=DataRepositoryType.SYNTHETIC
     )
+    transactions_df = data_repository.load_data()
+    processed_data = data_repository.preprocess(data=transactions_df)
 
-    data_repository.load_data()
+    return processed_data
 
 
 if __name__ == "__main__":
