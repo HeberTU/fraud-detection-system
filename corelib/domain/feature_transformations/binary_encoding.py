@@ -6,9 +6,10 @@ Created on: 1/10/23
 Licence,
 """
 import pandas as pd
+from pandera.typing import Series
 
 
-def is_weekday(tx_datetime: pd.Timestamp) -> int:
+def is_weekday(tx_datetime: Series[pd.Timestamp]) -> Series[int]:
     """Check if the provided date is weekend.
 
     Args:
@@ -20,11 +21,14 @@ def is_weekday(tx_datetime: pd.Timestamp) -> int:
             1 if the provided date is weekend 0 otherwise.
 
     """
-    return int(tx_datetime.weekday() >= 5)
+    return (tx_datetime.dt.weekday >= 5).astype(int)
 
 
-def is_night(tx_datetime: pd.Timestamp) -> int:
+def is_night(tx_datetime: Series[pd.Timestamp]) -> Series[int]:
     """Check if the provided date fall during night.
+
+    A transaction occurs during the day (0) or during the night (1).
+    The night is defined as hours that are between 0pm and 6am.
 
     Args:
         tx_datetime: pd.Timestamp
@@ -34,4 +38,4 @@ def is_night(tx_datetime: pd.Timestamp) -> int:
         int:
             1 if the provided date fall during the night 0 otherwise.
     """
-    return int(20 <= tx_datetime.hour <= 6)
+    return (tx_datetime.dt.hour <= 6).astype(int)
