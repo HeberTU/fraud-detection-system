@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
+from corelib import utils
 from corelib.domain import models
 
 
@@ -485,5 +486,121 @@ def simulate_card_not_present_fraud(
     )
     transactions_df.loc[index_fauds, "tx_fraud"] = 1
     transactions_df.loc[index_fauds, "tx_fraud_scenario"] = 3
+
+    return transactions_df
+
+
+@utils.cacher
+def simulate_credit_card_transactions_data(
+    n_terminals: int,
+    n_customers: int,
+    geo_uniform_lower_bound: int,
+    geo_uniform_upper_bound: int,
+    amount_uniform_lower_bound: int,
+    amount_uniform_upper_bound: int,
+    trans_uniform_lower_bound: int,
+    trans_uniform_upper_bound: int,
+    radius: float,
+    start_date: pd.Timestamp,
+    nb_days: int,
+    random_state: int,
+) -> pd.DataFrame:
+    """Simulate credit card transaction date.
+
+    Args:
+        n_terminals: int
+            Number of simulated terminal.
+        n_customers: int
+            Number of simulated customers.
+        geo_uniform_lower_bound: int
+                Lower limit from the uniform distribution that will be used to
+                simulate geographical data.
+        geo_uniform_upper_bound: int
+            Upper limit from the uniform distribution that will be used to
+            simulate geographical data.
+        amount_uniform_lower_bound: int
+            Lower limit from the uniform distribution that will be used to
+            simulate the customer spending amounts data.
+        amount_uniform_upper_bound: int
+            Upper limit from the uniform distribution that will be used to
+            simulate the customer spending amounts data.
+        trans_uniform_lower_bound: int
+            Lower limit from the uniform distribution that will be used to
+            simulate the customer spending frequency data.
+        trans_uniform_upper_bound: int
+            Upper limit from the uniform distribution that will be used to
+            simulate the customer spending frequency data.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+        nb_days: int
+            Number of day to generate data.
+        radius: float
+            Radius representing the maximum distance for a customer to use
+            a terminal.
+        random_state: int
+            Random seed for reproducibility purposes.
+
+    Returns:
+        pd.DataFrame:
+            DataFrame containing simulated data.
+    """
+    terminal_profile_list = generate_terminal_profiles_list(
+        n_terminals=n_terminals,
+        terminal_uniform_lower_bound=geo_uniform_lower_bound,
+        terminal_uniform_upper_bound=geo_uniform_upper_bound,
+        random_state=random_state,
+    )
+
+    terminal_profile_df = pd.DataFrame.from_records(
+        [t.__dict__ for t in terminal_profile_list]
+    )
+
+    x_y_terminals = terminal_profile_df[
+        ["x_terminal_id", "y_terminal_id"]
+    ].values.astype(float)
+
+    customer_profiles_list = generate_customer_profiles_list(
+        n_customers=n_customers,
+        customer_uniform_lower_bound=geo_uniform_lower_bound,
+        customer_uniform_upper_bound=geo_uniform_upper_bound,
+        amount_uniform_lower_bound=amount_uniform_lower_bound,
+        amount_uniform_upper_bound=amount_uniform_upper_bound,
+        trans_uniform_lower_bound=trans_uniform_lower_bound,
+        trans_uniform_upper_bound=trans_uniform_upper_bound,
+        random_state=random_state,
+    )
+
+    customer_profiles_df = pd.DataFrame.from_records(
+        [c.__dict__ for c in customer_profiles_list]
+    )
+
+    customer_profiles_df["available_terminals"] = customer_profiles_df.apply(
+        lambda row: get_available_terminals_for_customer(
+            x_y_customer=row[["x_customer_id", "y_customer_id"]].values.astype(
+                float
+            ),
+            x_y_terminals=x_y_terminals,
+            radius=radius,
+        ),
+        axis=1,
+    )
+
+    transactions_df = (
+        customer_profiles_df.groupby("customer_id")
+        .apply(
+            lambda x: generate_transaction_table(
+                x.iloc[0], start_date=start_date, nb_days=nb_days
+            )
+        )
+        .reset_index(drop=True)
+    )
+
+    transactions_df = add_frauds(
+        customer_profiles_df=customer_profiles_df,
+        terminal_profiles_df=terminal_profile_df,
+        transactions_df=transactions_df,
+        nb_days=nb_days,
+        start_date=start_date,
+    )
 
     return transactions_df
