@@ -106,7 +106,9 @@ class Synthetic(DataRepository):
             random_state=self.random_state,
         )
 
-        return transactions_df
+        transactions_df["transaction_id"] = range(len(transactions_df))
+
+        return transactions_df.set_index("transaction_id")
 
     def preprocess(self, data: pd.DataFrame) -> pd.DataFrame:
         """Preprocess credit card transactional data to fit an ML algorithm.
@@ -121,6 +123,20 @@ class Synthetic(DataRepository):
             is_night=lambda row: feature_transformations.is_night(
                 tx_datetime=row.tx_datetime,
             ),
+        )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 7, 30],
+            time_unit=feature_transformations.TimeUnits.DAYS,
+            feature_name="tx_amount",
+            agg_func_list=[
+                feature_transformations.AggFunc.MEAN,
+                feature_transformations.AggFunc.COUNT,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="customer_id",
         )
 
         return data

@@ -12,8 +12,16 @@ from pandera.typing import Series
 
 
 @pytest.fixture()
-def tx_datetime_series(request: FixtureRequest) -> Series[pd.Timestamp]:
+def transactions_df(request: FixtureRequest) -> Series[pd.Timestamp]:
     """datetime_series."""
     date_range_kwargs = request.param.get("date_range_kwargs")
     tx_datetime = pd.Series(pd.date_range(**date_range_kwargs))
-    return pd.to_datetime(tx_datetime)
+    tx_datetime = pd.to_datetime(tx_datetime)
+
+    data = pd.DataFrame(
+        data={"tx_datetime": tx_datetime, "tx_amount": range(len(tx_datetime))}
+    )
+
+    data["transaction_id"] = range(len(data))
+
+    return data.set_index("transaction_id")
