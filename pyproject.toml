@@ -9,11 +9,21 @@ packages = [{include = "fraud_detection_system"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pandas = "~1.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
+pytest = "^7.4.2"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+force_grid_wrap = 2
