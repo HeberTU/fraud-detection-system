@@ -286,3 +286,204 @@ def generate_transaction_table(
     )
 
     return customer_transactions
+
+
+def add_frauds(
+    customer_profiles_df: pd.DataFrame,
+    terminal_profiles_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+    nb_days: int,
+    start_date: pd.Timestamp,
+) -> pd.DataFrame:
+    """Add fraudulent transactions.
+
+    We consider the following cases:
+        - Baseline fraud, anomalous amounts.
+        - Phishing
+        - card not present fraud.
+
+    Args:
+        customer_profiles_df: pd.DataFrame
+            DataFrame containing the customer profile data.
+        terminal_profiles_df: pd.DataFrame
+            DataFrame containing all the terminal profiles.
+        transactions_df: pd.DataFrame
+            DataFrame containing all the transactions
+        nb_days: int
+            Number of days to simulate fraud.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+
+    Returns:
+        pd.DataFrame
+            DataFrame containing all the transactions and the simulated frauds.
+    """
+    # By default, all transactions are genuine
+    transactions_df["tx_fraud"] = 0
+    transactions_df["tx_fraud_scenario"] = 0
+
+    # Scenario 1
+    transactions_df = simulate_baseline_fraud(transactions_df=transactions_df)
+
+    for day in range(nb_days):
+        # Scenario 2
+        transactions_df = simulate_phishing(
+            terminal_profiles_df=terminal_profiles_df,
+            transactions_df=transactions_df,
+            day=day,
+            start_date=start_date,
+        )
+
+        # Scenario 3
+        transactions_df = simulate_card_not_present_fraud(
+            customer_profiles_df=customer_profiles_df,
+            transactions_df=transactions_df,
+            day=day,
+            start_date=start_date,
+        )
+
+    return transactions_df
+
+
+def simulate_baseline_fraud(
+    transactions_df: pd.DataFrame,
+    amount_threshold: int = 220,
+) -> pd.DataFrame:
+    """Simulate a baseline fraud.
+
+    Any transaction whose amount is more than 220 is a fraud. This scenario is
+    not inspired by a real-world scenario. Rather, it will provide an obvious
+    fraud pattern that should be detected by any baseline fraud detector.
+
+    Args:
+        transactions_df: pd.DataFrame
+            DataFrame containing all the transactions
+        amount_threshold: int:
+            Any transaction with an amount larger that this threshold will be
+            considered as fraud.
+
+    Returns:
+        pd.DataFrame
+            DataFrame containing all the transactions and the simulated frauds.
+    """
+    transactions_df.loc[
+        transactions_df.tx_amount > amount_threshold, "tx_fraud"
+    ] = 1
+    transactions_df.loc[
+        transactions_df.tx_amount > amount_threshold, "tx_fraud_scenario"
+    ] = 1
+
+    return transactions_df
+
+
+def simulate_phishing(
+    terminal_profiles_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+    day: int,
+    start_date: pd.Timestamp,
+) -> pd.DataFrame:
+    """Simulate fraudulent transaction via phishing.
+
+    Every day, a list of two terminals is drawn at random. All transactions on
+    these terminals in the next 28 days will be marked as fraudulent.
+
+    Args:
+        terminal_profiles_df: pd.DataFrame
+            DataFrame containing all the terminal profiles.
+        transactions_df: pd.DataFrame
+            DataFrame containing all the transactions
+        day: int
+            Number of days after the start day from which the fraudulent
+            transaction are drawn.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+
+    Returns:
+        pd.DataFrame
+            DataFrame containing all the transactions and the simulated frauds.
+    """
+    compromised_terminals = terminal_profiles_df.terminal_id.sample(
+        n=2, random_state=day
+    )
+
+    compromised_transactions = transactions_df[
+        (
+            transactions_df.tx_datetime
+            >= start_date + pd.Timedelta(value=day, unit="days")
+        )
+        & (
+            transactions_df.tx_datetime
+            < start_date + pd.Timedelta(value=day + 28, unit="days")
+        )
+        & (transactions_df.terminal_id.isin(compromised_terminals))
+    ]
+
+    transactions_df.loc[compromised_transactions.index, "tx_fraud"] = 1
+    transactions_df.loc[
+        compromised_transactions.index, "tx_fraud_scenario"
+    ] = 2
+
+    return transactions_df
+
+
+def simulate_card_not_present_fraud(
+    customer_profiles_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+    day: int,
+    start_date: pd.Timestamp,
+) -> pd.DataFrame:
+    """Simulate where the credentials of a customer have been leaked.
+
+    Every day, a list of 3 customers is drawn at random. In the next 14 days,
+    1/3 of their transactions have their amounts multiplied by 5 and marked as
+    fraudulent. The customer continues to make transactions, and transactions
+    of higher values are made by the fraudster who tries to maximize their
+    gains.
+
+    Args:
+        customer_profiles_df: pd.DataFrame
+            DataFrame containing the customer profile data.
+        transactions_df: pd.DataFrame
+            DataFrame containing all the transactions
+        day: int
+            Number of days after the start day from which the fraudulent
+            transaction are drawn.
+        start_date: pd.Timestamp
+            Date from which the transactions will be generated.
+
+    Returns:
+        pd.DataFrame
+            DataFrame containing all the transactions and the simulated frauds.
+    """
+    compromised_customers = customer_profiles_df.customer_id.sample(
+        n=3, random_state=day
+    ).values
+
+    compromised_transactions = transactions_df[
+        (
+            transactions_df.tx_datetime
+            >= start_date + pd.Timedelta(value=day, unit="days")
+        )
+        & (
+            transactions_df.tx_datetime
+            < start_date + pd.Timedelta(value=day + 14, unit="days")
+        )
+        & (transactions_df.customer_id.isin(compromised_customers))
+    ]
+
+    nb_compromised_transactions = len(compromised_transactions)
+
+    random.seed(day)
+
+    index_fauds = random.sample(
+        list(compromised_transactions.index.values),
+        k=int(nb_compromised_transactions / 3),
+    )
+
+    transactions_df.loc[index_fauds, "tx_amount"] = (
+        transactions_df.loc[index_fauds, "tx_amount"] * 5
+    )
+    transactions_df.loc[index_fauds, "tx_fraud"] = 1
+    transactions_df.loc[index_fauds, "tx_fraud_scenario"] = 3
+
+    return transactions_df

@@ -7,7 +7,10 @@ Licence,
 """
 import pandas as pd
 
-from corelib import domain
+from corelib import (
+    domain,
+    utils,
+)
 from corelib.data_repositories.data_reposotory import DataRepository
 
 
@@ -80,6 +83,7 @@ class Synthetic(DataRepository):
 
         self.random_state = random_state
 
+    @utils.cacher
     def load_data(self) -> pd.DataFrame:
         """Simulate the credit card transactional data.
 
@@ -137,6 +141,14 @@ class Synthetic(DataRepository):
                 )
             )
             .reset_index(drop=True)
+        )
+
+        transactions_df = domain.add_frauds(
+            customer_profiles_df=customer_profiles_df,
+            terminal_profiles_df=terminal_profile_df,
+            transactions_df=transactions_df,
+            nb_days=self.nb_days,
+            start_date=self.start_date,
         )
 
         return transactions_df

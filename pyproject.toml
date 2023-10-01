@@ -8,14 +8,16 @@ readme = "README.md"
 packages = [{include = "fraud_detection_system"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.5"
 pandas = "~1.2.2"
+flake8 = "^6.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
 pytest = "^7.4.2"
 jupyter = "^1.0.0"
+pydocstyle = "^6.3.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -27,3 +29,6 @@ line-length = 79
 [tool.isort]
 profile = "black"
 force_grid_wrap = 2
+
+[tool.flake8]
+exclude = ".venv"
