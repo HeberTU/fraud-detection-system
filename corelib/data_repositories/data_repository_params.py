@@ -17,8 +17,8 @@ import pandas as pd
 class SyntheticParams:
     """Synthetic data repository parameters."""
 
-    n_customers: int = 5
-    n_terminals: int = 10
+    n_customers: int = 500
+    n_terminals: int = 1000
     geo_uniform_lower_bound: int = 0
     geo_uniform_upper_bound: int = 100
     amount_uniform_lower_bound: int = 5
@@ -28,6 +28,6 @@ class SyntheticParams:
     start_date: pd.Timedelta = field(
         default_factory=lambda: pd.Timestamp("2023-09-30")
     )
-    nb_days: int = 5
-    radius: float = 35
+    nb_days: int = 6
+    radius: float = 10
     random_state: int = 0
