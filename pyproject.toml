@@ -17,6 +17,7 @@ flake8 = "^6.1.0"
 pre-commit = "^3.4.0"
 pytest = "^7.4.2"
 jupyter = "^1.0.0"
+pydocstyle = "^6.3.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -28,3 +29,6 @@ line-length = 79
 [tool.isort]
 profile = "black"
 force_grid_wrap = 2
+
+[tool.flake8]
+exclude = ".venv"
