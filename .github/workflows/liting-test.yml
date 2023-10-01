@@ -3,8 +3,7 @@ name: linting_and_testing
 on:
   pull_request:
     branches:
-      - master
-      - develop
+      - main
 
 env:
   ENV: DEV
