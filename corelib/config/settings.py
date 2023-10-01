@@ -34,8 +34,8 @@ class Settings(BaseSettings):
         os.makedirs(LOG_PATH)
 
     CACH_PATH: DirectoryPath = PROJECT_PATH / ".cachedir"
-    if not os.path.exists(LOG_PATH):
-        os.makedirs(LOG_PATH)
+    if not os.path.exists(CACH_PATH):
+        os.makedirs(CACH_PATH)
 
     # Logging settings.
     LOG_FILE_NAME: str = "log.log"
