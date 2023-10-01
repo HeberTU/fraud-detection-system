@@ -143,6 +143,14 @@ class Synthetic(DataRepository):
             .reset_index(drop=True)
         )
 
+        transactions_df = domain.add_frauds(
+            customer_profiles_df=customer_profiles_df,
+            terminal_profiles_df=terminal_profile_df,
+            transactions_df=transactions_df,
+            nb_days=self.nb_days,
+            start_date=self.start_date,
+        )
+
         return transactions_df
 
     def preprocess(self, data: pd.DataFrame) -> pd.DataFrame:

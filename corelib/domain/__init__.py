@@ -6,6 +6,7 @@ Created on: 29/9/23
 Licence,
 """
 from corelib.domain.data_simulator import (
+    add_frauds,
     generate_customer_profiles_list,
     generate_terminal_profiles_list,
     generate_transaction,
@@ -19,6 +20,7 @@ from corelib.domain.models import (
 )
 
 __all__ = [
+    "add_frauds",
     "CustomerProfile",
     "generate_customer_profiles_list",
     "generate_terminal_profiles_list",
