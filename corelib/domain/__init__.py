@@ -12,6 +12,7 @@ from corelib.domain.data_simulator import (
     generate_transaction,
     generate_transaction_table,
     get_available_terminals_for_customer,
+    simulate_credit_card_transactions_data,
 )
 from corelib.domain.models import (
     CustomerProfile,
@@ -27,6 +28,7 @@ __all__ = [
     "generate_transaction",
     "generate_transaction_table",
     "get_available_terminals_for_customer",
+    "simulate_credit_card_transactions_data",
     "TerminalProfiles",
     "Transaction",
 ]
