@@ -7,7 +7,10 @@ Licence,
 """
 import pandas as pd
 
-from corelib import domain
+from corelib import (
+    domain,
+    utils,
+)
 from corelib.data_repositories.data_reposotory import DataRepository
 from corelib.domain import feature_transformations
 
@@ -81,6 +84,7 @@ class Synthetic(DataRepository):
 
         self.random_state = random_state
 
+    @utils.timer
     def load_data(self) -> pd.DataFrame:
         """Simulate the credit card transactional data.
 
@@ -119,4 +123,4 @@ class Synthetic(DataRepository):
             ),
         )
 
-        raise data
+        return data

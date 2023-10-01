@@ -19,6 +19,7 @@ from corelib import utils
 from corelib.domain import models
 
 
+@utils.timer
 def generate_customer_profiles_list(
     n_customers: int,
     customer_uniform_lower_bound: int,
@@ -96,6 +97,7 @@ def generate_customer_profiles_list(
     return customer_profile_list
 
 
+@utils.timer
 def generate_terminal_profiles_list(
     n_terminals: int,
     terminal_uniform_lower_bound: int,
@@ -144,6 +146,7 @@ def generate_terminal_profiles_list(
     return terminal_profile_list
 
 
+@utils.timer
 def get_available_terminals_for_customer(
     x_y_customer: NDArray,
     x_y_terminals: NDArray,
@@ -172,6 +175,7 @@ def get_available_terminals_for_customer(
     return available_terminals
 
 
+@utils.timer
 def generate_transaction(
     customer_profile: models.CustomerProfile,
     start_date: pd.Timestamp,
@@ -235,6 +239,7 @@ def generate_transaction(
     return None
 
 
+@utils.timer
 def generate_transaction_table(
     customer_profile: models.CustomerProfile,
     start_date: pd.Timestamp,
@@ -289,6 +294,7 @@ def generate_transaction_table(
     return customer_transactions
 
 
+@utils.timer
 def add_frauds(
     customer_profiles_df: pd.DataFrame,
     terminal_profiles_df: pd.DataFrame,
@@ -346,6 +352,7 @@ def add_frauds(
     return transactions_df
 
 
+@utils.timer
 def simulate_baseline_fraud(
     transactions_df: pd.DataFrame,
     amount_threshold: int = 220,
@@ -377,6 +384,7 @@ def simulate_baseline_fraud(
     return transactions_df
 
 
+@utils.timer
 def simulate_phishing(
     terminal_profiles_df: pd.DataFrame,
     transactions_df: pd.DataFrame,
@@ -427,6 +435,7 @@ def simulate_phishing(
     return transactions_df
 
 
+@utils.timer
 def simulate_card_not_present_fraud(
     customer_profiles_df: pd.DataFrame,
     transactions_df: pd.DataFrame,
