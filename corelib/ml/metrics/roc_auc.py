@@ -16,7 +16,7 @@ from sklearn.metrics import roc_auc_score
 
 from corelib.ml.metrics.metric import (
     Metric,
-    Result,
+    Results,
 )
 
 
@@ -26,11 +26,11 @@ class ROCAUCScore(Metric):
     name: str = "roc_auc_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, predictions: Result, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: NDArray) -> float:
         """Compute Area Under the Receiver Operating Characteristic Curve.
 
         Args:
-            predictions: NDArray
+            results: Results
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
@@ -44,7 +44,7 @@ class ROCAUCScore(Metric):
 
         score = roc_auc_score(
             y_true=true_values,
-            y_score=Result.scores,
+            y_score=results.scores,
             **self.params,
         )
 

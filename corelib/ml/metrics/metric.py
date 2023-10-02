@@ -20,7 +20,7 @@ from numpy.typing import NDArray
 
 
 @dataclass
-class Result:
+class Results:
     """Data structure for storing result form NNModels.
 
     Parameters
@@ -43,11 +43,11 @@ class Metric(ABC):
     params: Optional[Dict[str, Any]] = None
 
     @abstractmethod
-    def measure(self, predictions: Result, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: NDArray) -> float:
         """Measure the model performance.
 
         Args:
-            predictions: NDArray
+            results: Results
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
