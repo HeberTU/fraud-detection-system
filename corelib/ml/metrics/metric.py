@@ -20,6 +20,22 @@ from numpy.typing import NDArray
 
 
 @dataclass
+class Result:
+    """Data structure for storing result form NNModels.
+
+    Parameters
+    ----------
+    predictions: NDArray
+        The output of a NN model.
+    scores: NDArray
+        probability, for probabilistic models, decision function otherwise.
+    """
+
+    predictions: NDArray
+    scores: NDArray
+
+
+@dataclass
 class Metric(ABC):
     """ML model mMetric abstraction."""
 
@@ -27,7 +43,7 @@ class Metric(ABC):
     params: Optional[Dict[str, Any]] = None
 
     @abstractmethod
-    def measure(self, predictions: NDArray, true_values: NDArray) -> float:
+    def measure(self, predictions: Result, true_values: NDArray) -> float:
         """Measure the model performance.
 
         Args:
