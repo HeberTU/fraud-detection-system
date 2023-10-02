@@ -110,6 +110,7 @@ class Synthetic(DataRepository):
 
         return transactions_df.set_index("transaction_id")
 
+    @utils.timer
     def preprocess(self, data: pd.DataFrame) -> pd.DataFrame:
         """Preprocess credit card transactional data to fit an ML algorithm.
 
@@ -137,6 +138,54 @@ class Synthetic(DataRepository):
             datetime_col="tx_datetime",
             index_name="transaction_id",
             grouping_column="customer_id",
+            delay_period=0,
+        )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 7, 30],
+            time_unit=feature_transformations.TimeUnits.DAYS,
+            feature_name="tx_fraud",
+            agg_func_list=[
+                feature_transformations.AggFunc.SUM,
+                feature_transformations.AggFunc.COUNT,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="terminal_id",
+            delay_period=7,
+        )
+
+        data = data.assign(
+            terminal_id_mean_tx_fraud_1_days=(
+                lambda x: (
+                    x.terminal_id_sum_tx_fraud_1_days
+                    / x.terminal_id_count_tx_fraud_1_days
+                )
+            ),
+            terminal_id_mean_tx_fraud_7_days=(
+                lambda x: (
+                    x.terminal_id_sum_tx_fraud_7_days
+                    / x.terminal_id_count_tx_fraud_7_days
+                )
+            ),
+            terminal_id_mean_tx_fraud_30_days=(
+                lambda x: (
+                    x.terminal_id_sum_tx_fraud_30_days
+                    / x.terminal_id_count_tx_fraud_30_days
+                )
+            ),
+        )
+
+        data = data.drop(
+            columns=[
+                "terminal_id_sum_tx_fraud_1_days",
+                "terminal_id_count_tx_fraud_1_days",
+                "terminal_id_sum_tx_fraud_7_days",
+                "terminal_id_count_tx_fraud_7_days",
+                "terminal_id_sum_tx_fraud_30_days",
+                "terminal_id_count_tx_fraud_30_days",
+            ]
         )
 
         return data

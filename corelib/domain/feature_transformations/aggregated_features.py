@@ -37,6 +37,7 @@ def aggregate_feature(
     datetime_col: str,
     index_name: str,
     grouping_column: str,
+    delay_period: int = 0,
 ) -> pd.DataFrame:
     """Aggregate a feature by a time window and another grouping variable.
 
@@ -57,6 +58,10 @@ def aggregate_feature(
             Name of the index.
         grouping_column: str
             Outer grouping variable
+        delay_period: int
+            Delay period for transactions that do not are reflected immediately
+            ,e.g., frauds usually consolidate in a db after experts analyze
+            them.
 
     Returns:
         pd.DataFrame
@@ -71,10 +76,16 @@ def aggregate_feature(
             agg_func_list=agg_func_list,
             datetime_col=datetime_col,
             index_name=index_name,
+            grouping_column=grouping_column,
+            delay_period=delay_period,
         )
     )
 
-    return transactions_df.reset_index(drop=True)
+    transactions_df = transactions_df.reset_index(drop=True)
+
+    transactions_df["transaction_id"] = range(len(transactions_df))
+
+    return transactions_df.set_index("transaction_id")
 
 
 def aggregate_feature_by_time_window(
@@ -85,6 +96,8 @@ def aggregate_feature_by_time_window(
     agg_func_list: List[AggFunc],
     datetime_col: str,
     index_name: str,
+    grouping_column: str,
+    delay_period: int = 0,
 ) -> pd.DataFrame:
     """Aggregate a feature by the given time window.
 
@@ -103,6 +116,10 @@ def aggregate_feature_by_time_window(
             Name of the timestamp column.
         index_name: str
             Name of the index.
+        delay_period: int
+            Delay period for transactions that do not are reflected immediately
+            ,e.g., frauds usually consolidate in a db after experts analyze
+            them.
 
     Returns:
         pd.Series:
@@ -119,14 +136,32 @@ def aggregate_feature_by_time_window(
                 data[feature_name]
                 .rolling(
                     window=pd.Timedelta(
-                        value=window_size, unit=time_unit.value
+                        value=window_size + delay_period, unit=time_unit.value
                     )
                 )
                 .agg(agg_func.value)
             )
 
+            if delay_period > 0:
+
+                aggregated_feature_delay = (
+                    data[feature_name]
+                    .rolling(
+                        window=pd.Timedelta(
+                            value=delay_period,
+                            unit=TimeUnits.DAYS.value,
+                        )
+                    )
+                    .agg(agg_func.value)
+                )
+
+                aggregated_feature = (
+                    aggregated_feature - aggregated_feature_delay
+                )
+
             data[
-                "customer_"
+                grouping_column
+                + "_"
                 + agg_func.value
                 + "_"
                 + feature_name
