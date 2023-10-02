@@ -39,7 +39,7 @@ class Results:
 class Metric(ABC):
     """ML model mMetric abstraction."""
 
-    name: str
+    name: str = ""
     params: Optional[Dict[str, Any]] = None
 
     @abstractmethod
