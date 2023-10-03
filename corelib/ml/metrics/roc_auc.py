@@ -11,12 +11,12 @@ from typing import (
     Optional,
 )
 
-from numpy.typing import NDArray
 from sklearn.metrics import roc_auc_score
 
 from corelib.ml.metrics.metric import (
     Metric,
     Results,
+    TrueValues,
 )
 
 
@@ -47,7 +47,7 @@ class ROCAUCScore(Metric):
     name: str = "roc_auc_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: TrueValues) -> float:
         """Compute Area Under the Receiver Operating Characteristic Curve.
 
         Args:
@@ -64,7 +64,7 @@ class ROCAUCScore(Metric):
             self.params = {}
 
         score = roc_auc_score(
-            y_true=true_values,
+            y_true=true_values.tx_fraud,
             y_score=results.scores,
             **self.params,
         )

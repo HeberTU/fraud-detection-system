@@ -15,12 +15,12 @@ from typing import (
     Optional,
 )
 
-from numpy.typing import NDArray
 from sklearn.metrics import average_precision_score
 
 from corelib.ml.metrics.metric import (
     Metric,
     Results,
+    TrueValues,
 )
 
 
@@ -51,7 +51,7 @@ class AveragePrecisionScore(Metric):
     name: str = "average_precision_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: TrueValues) -> float:
         """Compute Area Under the Receiver Operating Characteristic Curve.
 
         Args:
@@ -68,7 +68,7 @@ class AveragePrecisionScore(Metric):
             self.params = {}
 
         score = average_precision_score(
-            y_true=true_values,
+            y_true=true_values.tx_fraud,
             y_score=results.scores,
             **self.params,
         )

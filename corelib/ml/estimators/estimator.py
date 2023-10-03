@@ -37,6 +37,8 @@ class Estimator:
         evaluator: Optional[Evaluator],
         feature_schemas: data_schemas.BaseSchema,
         target_schema: Optional[data_schemas.BaseSchema],
+        timestamp_schema: Optional[data_schemas.BaseSchema],
+        customer_id_schema: Optional[data_schemas.BaseSchema],
         algorithm: Algorithm,
         feature_transformer: FeatureTransformer,
     ):
@@ -51,6 +53,10 @@ class Estimator:
                 Data schemas that defines feature space.
             target_schema: Optional[data_schemas.BaseSchema]
                 Data schemas that defines target. Optional for Inference.
+            timestamp_schema: Optional[data_schemas.BaseSchema]
+                Time stamp schema for model evaluation.
+            customer_id_schema: Optional[data_schemas.BaseSchema],
+                customer_id schema for model evaluation.
             algorithm: BaseEstimator
                 ML algorithm to tran and test.
             feature_transformer: FeatureTransformer
@@ -58,8 +64,12 @@ class Estimator:
         """
         self.data_repository = data_repository
         self.evaluator = evaluator
+
         self.feature_schemas = feature_schemas
         self.target_schema = target_schema
+        self.timestamp_schema = timestamp_schema
+        self.customer_id_schema = customer_id_schema
+
         self.algorithm = algorithm
         self.feature_transformer = feature_transformer
 
@@ -150,11 +160,21 @@ class Estimator:
         true_values = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
         )
+        tx_timestamp = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.timestamp_schema
+        )
+        customer_id = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.customer_id_schema
+        )
         results = self.evaluator.log_testing(
             estimator_params=self.algorithm.get_fit_param(),
             hashed_data=hashed_data,
             results=results,
-            true_values=true_values,
+            true_values=metrics.TrueValues(
+                tx_fraud=true_values,
+                tx_timestamp=tx_timestamp,
+                customer_id=customer_id,
+            ),
         )
         return results
 
