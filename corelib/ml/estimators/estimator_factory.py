@@ -16,6 +16,10 @@ from corelib.ml.evaluators.evaluator_factory import (
     EvaluatorFactory,
     EvaluatorType,
 )
+from corelib.ml.transformers.transformers_factory import (
+    TransformerFactory,
+    TransformerType,
+)
 
 
 class EstimatorFactory:
@@ -26,6 +30,7 @@ class EstimatorFactory:
         data_repository_type: dr.DataRepositoryType,
         evaluator_type: EvaluatorType,
         algorithm_type: AlgorithmType,
+        transformer_type: TransformerType,
     ) -> Estimator:
         """Instantiate the estimator.
 
@@ -36,6 +41,8 @@ class EstimatorFactory:
                 Type of Ml model evaluator.
             algorithm_type: AlgorithmType
                 Type of ML algorithm to tran and test.
+            transformer_type: TransformerType
+                Type of input transformer to be used.
 
         Returns:
             Evaluator
@@ -48,6 +55,9 @@ class EstimatorFactory:
             data_repository_type=data_repository_type
         )
         algorithm = AlgorithmFactory().create(algorithm_type=algorithm_type)
+        feature_transformer = TransformerFactory().create(
+            transformer_type=transformer_type
+        )
 
         return Estimator(
             data_repository=data_repository,
@@ -55,4 +65,5 @@ class EstimatorFactory:
             feature_schemas=data_schemas.get("feature_space"),
             target_schema=data_schemas.get("target"),
             algorithm=algorithm,
+            feature_transformer=feature_transformer,
         )
