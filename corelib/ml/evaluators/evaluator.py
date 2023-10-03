@@ -57,6 +57,7 @@ class Evaluator(ABC):
         raise NotImplementedError
 
     @staticmethod
+    @utils.timer
     def hash_data(data: pd.DataFrame) -> str:
         """Hash data for tracking purposes.
 
@@ -67,7 +68,7 @@ class Evaluator(ABC):
         Returns:
             str: hashed representation of the data.
         """
-        hashed_object = utils.make_obj_hash(obj=data, mode="full")
+        hashed_object = utils.make_obj_hash(obj=data, is_training=True)
         return hashed_object
 
     def evaluate(
