@@ -177,15 +177,12 @@ class Synthetic(DataRepository):
             ),
         )
 
-        data = data.drop(
-            columns=[
-                "terminal_id_sum_tx_fraud_1_days",
-                "terminal_id_count_tx_fraud_1_days",
-                "terminal_id_sum_tx_fraud_7_days",
-                "terminal_id_count_tx_fraud_7_days",
-                "terminal_id_sum_tx_fraud_30_days",
-                "terminal_id_count_tx_fraud_30_days",
-            ]
+        data = data.fillna(
+            value={
+                "terminal_id_mean_tx_fraud_1_days": 0,
+                "terminal_id_mean_tx_fraud_7_days": 0,
+                "terminal_id_mean_tx_fraud_30_days": 0,
+            }
         )
 
         return data
