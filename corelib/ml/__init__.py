@@ -5,9 +5,12 @@ Created on: 2/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from corelib.ml.evaluators.evaluator_factory import (
-    EvaluatorFactory,
-    EvaluatorType,
-)
+from corelib.ml.algorithms.algorithm_factory import AlgorithmType
+from corelib.ml.estimators.estimator_factory import EstimatorFactory
+from corelib.ml.evaluators.evaluator_factory import EvaluatorType
 
-__all__ = ["EvaluatorType", "EvaluatorFactory"]
+__all__ = [
+    "AlgorithmType",
+    "EvaluatorType",
+    "EstimatorFactory",
+]

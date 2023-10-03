@@ -5,28 +5,21 @@ Created on: 30/9/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from corelib import ml
-from corelib.data_repositories.data_repository_factory import (
-    DataRepositoryFactory,
-    DataRepositoryType,
+from corelib import (
+    data_repositories,
+    ml,
 )
 
 
 def main():
     """Execute main script."""
-    data_repository = DataRepositoryFactory().create(
-        data_repository_type=DataRepositoryType.SYNTHETIC
-    )
-    transactions_df = data_repository.load_data()
-    processed_data = data_repository.preprocess(data=transactions_df)
-
-    evaluator = ml.EvaluatorFactory().create(
-        evaluator_type=ml.EvaluatorType.TIME_EVALUATOR
+    estimator = ml.EstimatorFactory.create(
+        data_repository_type=data_repositories.DataRepositoryType.SYNTHETIC,
+        evaluator_type=ml.EvaluatorType.TIME_EVALUATOR,
+        algorithm_type=ml.AlgorithmType.DECISION_TREE,
     )
 
-    train_data, test_data = evaluator.split(data=processed_data)
-
-    return train_data, test_data
+    estimator.creat_model()
 
 
 if __name__ == "__main__":
