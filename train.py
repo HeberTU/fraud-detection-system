@@ -17,6 +17,7 @@ def main():
         data_repository_type=data_repositories.DataRepositoryType.SYNTHETIC,
         evaluator_type=ml.EvaluatorType.TIME_EVALUATOR,
         algorithm_type=ml.AlgorithmType.DECISION_TREE,
+        transformer_type=ml.TransformerType.MIN_MAX_SCALER,
     )
 
     scores = estimator.creat_model()

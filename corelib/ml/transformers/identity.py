@@ -13,7 +13,7 @@ from corelib.ml.transformers.transformer import FeatureTransformer
 class IdentityTransformer(FeatureTransformer):
     """Identity transformer."""
 
-    def fit_transformation(self, features: pd.DataFramey) -> None:
+    def fit_transformation(self, features: pd.DataFrame) -> None:
         """Fit identity transformer.
 
         Args:
