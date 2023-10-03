@@ -10,14 +10,19 @@ from __future__ import annotations
 import enum
 
 from corelib.ml.algorithms.algorithm import Algorithm
-from corelib.ml.algorithms.algorithm_params import DecisionTreeParams
+from corelib.ml.algorithms.algorithm_params import (
+    DecisionTreeParams,
+    LightGBMParams,
+)
 from corelib.ml.algorithms.decision_tree import DecisionTree
+from corelib.ml.algorithms.light_gbm import LightGBM
 
 
 class AlgorithmType(str, enum.Enum):
     """Available ml algorithms."""
 
     DECISION_TREE: AlgorithmType = "DECISION_TREE"
+    LIGHT_GBM: AlgorithmType = "LIGHT_GBM"
 
 
 class AlgorithmFactory:
@@ -25,8 +30,14 @@ class AlgorithmFactory:
 
     def __init__(self):
         """Initialize ml algorithm factory."""
-        self._params = {AlgorithmType.DECISION_TREE: DecisionTreeParams}
-        self._catalogue = {AlgorithmType.DECISION_TREE: DecisionTree}
+        self._params = {
+            AlgorithmType.DECISION_TREE: DecisionTreeParams,
+            AlgorithmType.LIGHT_GBM: LightGBMParams,
+        }
+        self._catalogue = {
+            AlgorithmType.DECISION_TREE: DecisionTree,
+            AlgorithmType.LIGHT_GBM: LightGBM,
+        }
 
     def create(self, algorithm_type: AlgorithmType) -> Algorithm:
         """Instantiate an ML algorithm implementation.
