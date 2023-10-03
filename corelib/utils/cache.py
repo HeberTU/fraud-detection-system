@@ -160,7 +160,7 @@ def make_obj_hash(obj: object, mode: str = "fast") -> str:
             hash_value = hash_function(str(obj))
         elif isinstance(obj, pd.DataFrame):
             if mode == "fast" and not obj.empty:
-                obj = obj.sample(100, random_state=42, replace=True)
+                obj = obj.sample(n=100, random_state=42, replace=True)
             index = tuple(obj.index)
             columns = tuple(obj.columns)
             values = tuple(make_obj_hash(x) for x in obj.values)
