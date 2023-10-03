@@ -9,6 +9,10 @@ from abc import (
     ABC,
     abstractmethod,
 )
+from typing import (
+    Any,
+    Dict,
+)
 
 import pandas as pd
 from numpy.typing import NDArray
@@ -59,5 +63,15 @@ class Algorithm(ABC):
         Returns:
             NDArray:
                 model predictions
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_fit_param(self) -> Dict[str, Any]:
+        """Get algorithm params.
+
+        Returns:
+            Dict[str, Any]:
+                algorithm params.
         """
         raise NotImplementedError

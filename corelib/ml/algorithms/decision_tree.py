@@ -5,6 +5,11 @@ Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import (
+    Any,
+    Dict,
+)
+
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
@@ -60,3 +65,16 @@ class DecisionTree(DecisionTreeClassifier, Algorithm):
         log_probs = log_probs[:, 1]
         log_probs = np.exp(log_probs)
         return log_probs
+
+    def get_fit_param(self) -> Dict[str, Any]:
+        """Get algorithm params.
+
+        Returns:
+            Dict[str, Any]:
+                algorithm params.
+        """
+        algorithm_params = {
+            "algorithm_name": "DecisionTree",
+            **self.get_params(),
+        }
+        return algorithm_params

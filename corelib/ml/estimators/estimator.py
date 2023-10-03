@@ -135,7 +135,7 @@ class Estimator:
             data=data, schema_class=self.target_schema
         )
         results = self.evaluator.log_testing(
-            estimator_params=self.algorithm.get_params(),
+            estimator_params=self.algorithm.get_fit_param(),
             hashed_data=hashed_data,
             results=results,
             true_values=true_values,
