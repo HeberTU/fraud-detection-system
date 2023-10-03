@@ -13,7 +13,6 @@ from typing import (
 )
 
 import pandas as pd
-from sklearn.base import BaseEstimator
 
 from corelib import (
     data_repositories,
@@ -21,6 +20,7 @@ from corelib import (
     utils,
 )
 from corelib.ml import metrics
+from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.evaluators.evaluator import Evaluator
 
 
@@ -33,7 +33,7 @@ class Estimator:
         evaluator: Evaluator,
         feature_schemas: data_schemas.BaseSchema,
         target_schema: data_schemas.BaseSchema,
-        algorithm: BaseEstimator,
+        algorithm: Algorithm,
     ):
         """Instantiate a Base Algorithm.
 
@@ -97,7 +97,7 @@ class Estimator:
         target = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
         )
-        self.algorithm.fit(X=features, y=target)
+        self.algorithm.fit_algorithm(features=features, target=target)
 
     def predict(self, data: pd.DataFrame) -> metrics.Results:
         """Generate model predictions.

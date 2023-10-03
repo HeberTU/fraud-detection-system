@@ -9,8 +9,7 @@ from __future__ import annotations
 
 import enum
 
-from sklearn.base import BaseEstimator
-
+from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.algorithms.algorithm_params import DecisionTreeParams
 from corelib.ml.algorithms.decision_tree import DecisionTree
 
@@ -29,7 +28,7 @@ class AlgorithmFactory:
         self._params = {AlgorithmType.DECISION_TREE: DecisionTreeParams}
         self._catalogue = {AlgorithmType.DECISION_TREE: DecisionTree}
 
-    def create(self, algorithm_type: AlgorithmType) -> BaseEstimator:
+    def create(self, algorithm_type: AlgorithmType) -> Algorithm:
         """Instantiate an ML algorithm implementation.
 
         Args:

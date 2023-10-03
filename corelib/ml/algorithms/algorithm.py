@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Decision Tree wraper.
+"""ML algorithm interface.
 
 Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-import numpy as np
+from abc import (
+    ABC,
+    abstractmethod,
+)
+
 import pandas as pd
 from numpy.typing import NDArray
-from sklearn.tree import DecisionTreeClassifier
-
-from corelib.ml.algorithms.algorithm import Algorithm
 
 
-class DecisionTree(DecisionTreeClassifier, Algorithm):
-    """Decision tree classifier wrapper."""
+class Algorithm(ABC):
+    """Machine learning algorithm."""
 
+    @abstractmethod
     def fit_algorithm(
         self, features: pd.DataFrame, target: pd.DataFrame
     ) -> None:
@@ -30,8 +32,9 @@ class DecisionTree(DecisionTreeClassifier, Algorithm):
         Returns:
             None
         """
-        self.fit(X=features, y=target)
+        raise NotImplementedError
 
+    @abstractmethod
     def get_predictions(self, features: pd.DataFrame) -> NDArray:
         """Wraps the predict method.
 
@@ -43,10 +46,11 @@ class DecisionTree(DecisionTreeClassifier, Algorithm):
             NDArray:
                 model predictions
         """
-        return self.predict(X=features)
+        raise NotImplementedError
 
+    @abstractmethod
     def get_scores(self, features: pd.DataFrame) -> NDArray:
-        """Wraps the predict log probs method.
+        """Wraps the predict probs method.
 
         Args:
             features: pd.DataFrame
@@ -56,7 +60,4 @@ class DecisionTree(DecisionTreeClassifier, Algorithm):
             NDArray:
                 model predictions
         """
-        log_probs = self.predict_log_proba(X=features)
-        log_probs = log_probs[:, 1]
-        log_probs = np.exp(log_probs)
-        return log_probs
+        raise NotImplementedError
