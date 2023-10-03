@@ -5,34 +5,48 @@ Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from numpy.typing import NDArray
-from sklearn.base import TransformerMixin
+import pandas as pd
+
+from corelib.ml.transformers.transformer import FeatureTransformer
 
 
-class IdentityTransformer(TransformerMixin):
+class IdentityTransformer(FeatureTransformer):
     """Identity transformer."""
 
-    def fit(self, X: NDArray) -> None:
+    def fit_transformation(self, features: pd.DataFramey) -> None:
         """Fit identity transformer.
 
         Args:
-            X:  NDArray
-                Data to fit the transformation on.
+            features: pd.DataFrame
+                Input features to fit the transformation.
 
         Returns:
             None
         """
         pass
 
-    def transform(self, X: NDArray) -> NDArray:
+    def apply_transformation(self, features: pd.DataFrame) -> pd.DataFrame:
         """Perform identity transformation.
 
         Args:
-            X: NDArray
-                Data to transform.
+            features: pd.DataFrame
+                Features to apply transformation
 
         Returns:
-            NDArray:
-                Transformed data.
+            pd.DataFrame:
+                Transformed features.
         """
-        return X
+        return features
+
+    def fit_apply_transformation(self, features: pd.DataFrame) -> pd.DataFrame:
+        """Fit and apply the transformation.
+
+        Args:
+            features: pd.DataFrame
+                Features to fit and apply transformation
+
+        Returns:
+            pd.DataFrame:
+                Transformed features.
+        """
+        return features
