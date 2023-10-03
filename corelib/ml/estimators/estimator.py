@@ -7,12 +7,19 @@ Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import (
+    Any,
+    Dict,
+)
+
+import pandas as pd
 from sklearn.base import BaseEstimator
 
 from corelib import (
     data_repositories,
     data_schemas,
 )
+from corelib.ml import metrics
 from corelib.ml.evaluators.evaluator import Evaluator
 
 
@@ -47,13 +54,84 @@ class Estimator:
         self.target_schema = target_schema
         self.algorithm = algorithm
 
-    def creat_model(self) -> None:
+        self.artifacts = {}
+
+    def creat_model(self) -> Dict[str, Any]:
         """Create a model, ml pipeline logic.
 
         Returns:
-            None
+            Dict[str, Any]:
+                Tests results.
         """
         data = self.data_repository.load_data()
         processed_data = self.data_repository.preprocess(data=data)
 
-        self.evaluator.split(data=processed_data)
+        hashed_data = self.evaluator.hash_data(data=processed_data)
+
+        train_data, test_data = self.evaluator.split(data=processed_data)
+
+        self.fit(data=train_data)
+
+        test_results = self.evaluate(
+            data=test_data,
+            hashed_data=hashed_data,
+        )
+
+        return test_results
+
+    def fit(self, data: pd.DataFrame) -> None:
+        """Fit ML algorithm.
+
+        Args:
+            data: pd.DataFrame
+                Data that will be used to train the algorithm.
+
+        Returns:
+            None
+        """
+        features = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.feature_schemas
+        )
+        target = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.target_schema
+        )
+        self.algorithm.fit(X=features, y=target)
+
+    def predict(self, data: pd.DataFrame) -> metrics.Results:
+        """Generate model predictions.
+
+        Args:
+            data: pd.DataFrame
+                Data frame that will be used to generate predictions.
+
+        Returns:
+            metrics.Results
+        """
+        return metrics.Results(
+            predictions=self.algorithm.get_predictions(X=data),
+            scores=self.algorithm.get_scores(X=data),
+        )
+
+    def evaluate(self, data: pd.DataFrame, hashed_data: str) -> Dict[str, Any]:
+        """Evaluate ml model.
+
+        Args:
+            data: pd.DataFrame
+                Data that will be used to evaluate model, usually is the
+                testing data.
+            hashed_data: str
+
+        Returns:
+            Dict[str, float]
+        """
+        results = self.predict(data=data)
+        true_values = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.target_schema
+        )
+        results = self.evaluator.log_testing(
+            estimator_params=self.algorithm.get_params(),
+            hashed_data=hashed_data,
+            results=results,
+            true_values=true_values,
+        )
+        return results
