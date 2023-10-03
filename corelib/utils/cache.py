@@ -8,7 +8,6 @@ Licence,
 import functools
 import hashlib
 import inspect
-import pickle
 import types
 from inspect import getsource
 from typing import Callable
@@ -16,6 +15,12 @@ from typing import Callable
 import joblib
 import numpy as np
 import pandas as pd
+
+from corelib import config
+from corelib.utils.io import (
+    dump_artifacts,
+    load_artifacts,
+)
 
 
 def cacher(func: Callable) -> Callable:
@@ -50,56 +55,24 @@ def cacher(func: Callable) -> Callable:
 
         hash_rep = hash_function(args_hash + kwargs_hash + func_hash)
 
+        file_path = config.settings.CACH_PATH
+        file_name = func.__name__ + "_" + hash_rep + ".pickle"
+
         try:
 
-            result = load_from_memory(hash_str=hash_rep, prefix=func.__name__)
+            result = load_artifacts(file_path=file_path / file_name)
 
         except FileNotFoundError:
 
             result = func(*args, **kwargs)
 
-            dump_result(obj=result, hash_str=hash_rep, prefix=func.__name__)
+            dump_artifacts(
+                obj=result, file_path=file_path, file_name=file_name
+            )
 
         return result
 
     return cacher_wrapper
-
-
-def dump_result(obj: object, hash_str: str, prefix: str) -> None:
-    """Dump object to pickle format.
-
-    Args:
-        obj: object
-            Object to save.
-        hash_str: str
-            Unique identifier fo the object.
-        prefix: str
-            Provide human-readable info on the filename generated.
-    """
-    file_name = ".cachedir/" + prefix + "_" + hash_str + ".pickle"
-    with open(file=file_name, mode="wb") as handle:
-        pickle.dump(obj=obj, file=handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_from_memory(hash_str: str, prefix: str) -> object:
-    """Load a pickle object from memory.
-
-    Args:
-        hash_str: str
-            Unique identifier fo the object.
-        prefix: str
-            Provide human-readable info on the filename generated.
-
-    Returns:
-        object:
-            Saved object.
-    """
-    file_name = ".cachedir/" + prefix + "_" + hash_str + ".pickle"
-
-    with open(file=file_name, mode="rb") as handle:
-        obj = pickle.load(handle)
-
-    return obj
 
 
 def hash_function(obj: object) -> str:
