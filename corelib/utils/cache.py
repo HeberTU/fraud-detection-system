@@ -13,6 +13,7 @@ import types
 from inspect import getsource
 from typing import Callable
 
+import joblib
 import numpy as np
 import pandas as pd
 
@@ -119,7 +120,9 @@ def hash_function(obj: object) -> str:
     return hash_value
 
 
-def make_obj_hash(obj: object, mode: str = "fast") -> str:
+def make_obj_hash(
+    obj: object, mode: str = "fast", is_training: bool = False
+) -> str:
     """Hash an object.
 
     Args:
@@ -127,11 +130,16 @@ def make_obj_hash(obj: object, mode: str = "fast") -> str:
             Object to be hashed.
         mode: str
             hash mode for pandas dataframes.
+        is_training: bool
+            If True  joblib will be used.
 
 
     Returns:
         str: hashed representation.
     """
+    if is_training:
+        return joblib.hash(obj)
+
     hash_value = 42
 
     try:
