@@ -21,7 +21,7 @@ class AlgorithmType(str, enum.Enum):
 
 
 class AlgorithmFactory:
-    """Evaluator factory."""
+    """Algorithm factory."""
 
     def __init__(self):
         """Initialize ml algorithm factory."""
