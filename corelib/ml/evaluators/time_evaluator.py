@@ -22,6 +22,7 @@ class TimeEvaluator(Evaluator):
     def __init__(
         self,
         metric_type_list: List[metrics.MetricType],
+        date_colum_name: str,
         delta_test_in_days: int,
         delta_delay_in_days: int,
     ):
@@ -30,6 +31,8 @@ class TimeEvaluator(Evaluator):
         Args:
             metric_type_list: List[metrics.MetricType]
                 list of model metrics.
+            date_colum_name: str
+                Column name that contains the datetime index.
             delta_test_in_days: int
                 Number of days to include in the test set.
             delta_delay_in_days: int
@@ -39,6 +42,7 @@ class TimeEvaluator(Evaluator):
                 to the result of a fraud investigation.
         """
         super().__init__(metric_type_list=metric_type_list)
+        self.date_colum_name = date_colum_name
         self.delta_test_in_days = delta_test_in_days
         self.delta_delay_in_days = delta_delay_in_days
 
@@ -53,5 +57,18 @@ class TimeEvaluator(Evaluator):
             Tuple[pd.DataFrame, pd.DataFrame]:
                 Training and testing data.
         """
-        print(data)
-        return data
+        end_date = data[self.date_colum_name].max().ceil(freq="D")
+
+        test_start_date = end_date - pd.Timedelta(
+            value=self.delta_test_in_days, unit="D"
+        )
+
+        train_end_date = test_start_date - pd.Timedelta(
+            value=self.delta_delay_in_days, unit="D"
+        )
+
+        test_data = data[data[self.date_colum_name] > test_start_date].copy()
+
+        train_data = data[data[self.date_colum_name] <= train_end_date]
+
+        return train_data, test_data

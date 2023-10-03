@@ -24,9 +24,9 @@ def main():
         evaluator_type=ml.EvaluatorType.TIME_EVALUATOR
     )
 
-    evaluator.split(data=processed_data)
+    train_data, test_data = evaluator.split(data=processed_data)
 
-    return processed_data
+    return train_data, test_data
 
 
 if __name__ == "__main__":
