@@ -19,7 +19,9 @@ def main():
         algorithm_type=ml.AlgorithmType.DECISION_TREE,
     )
 
-    estimator.creat_model()
+    scores = estimator.creat_model()
+
+    return scores
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from sklearn.base import BaseEstimator
 from corelib import (
     data_repositories,
     data_schemas,
+    utils,
 )
 from corelib.ml import metrics
 from corelib.ml.evaluators.evaluator import Evaluator
@@ -79,6 +80,7 @@ class Estimator:
 
         return test_results
 
+    @utils.timer
     def fit(self, data: pd.DataFrame) -> None:
         """Fit ML algorithm.
 
@@ -107,11 +109,15 @@ class Estimator:
         Returns:
             metrics.Results
         """
+        features = data_schemas.validate_and_coerce_schema(
+            data=data, schema_class=self.feature_schemas
+        )
         return metrics.Results(
-            predictions=self.algorithm.get_predictions(X=data),
-            scores=self.algorithm.get_scores(X=data),
+            predictions=self.algorithm.get_predictions(features=features),
+            scores=self.algorithm.get_scores(features=features),
         )
 
+    @utils.timer
     def evaluate(self, data: pd.DataFrame, hashed_data: str) -> Dict[str, Any]:
         """Evaluate ml model.
 
