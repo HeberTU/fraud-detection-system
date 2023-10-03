@@ -63,6 +63,7 @@ class Evaluator(ABC):
         Args:
             data: pd.DataFrame
                 Data that will be used to train and test the model.
+
         Returns:
             str: hashed representation of the data.
         """
