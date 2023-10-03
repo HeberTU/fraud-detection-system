@@ -66,7 +66,8 @@ class Evaluator(ABC):
         Returns:
             str: hashed representation of the data.
         """
-        return utils.make_obj_hash(obj=data, mode="full")
+        hashed_object = utils.make_obj_hash(obj=data, mode="full")
+        return hashed_object
 
     def evaluate(
         self, results: metrics.Results, true_values: NDArray
