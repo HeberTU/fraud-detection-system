@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     if not os.path.exists(CACH_PATH):
         os.makedirs(CACH_PATH)
 
+    ASSETS_PATH: DirectoryPath = PROJECT_PATH / "assets" / "api"
+    if not os.path.exists(ASSETS_PATH):
+        os.makedirs(ASSETS_PATH)
+
     # Logging settings.
     LOG_FILE_NAME: str = "log.log"
 
