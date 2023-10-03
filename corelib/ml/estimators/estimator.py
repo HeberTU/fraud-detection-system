@@ -7,9 +7,11 @@ Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+import datetime
 from typing import (
     Any,
     Dict,
+    Optional,
 )
 
 import pandas as pd
@@ -21,7 +23,9 @@ from corelib import (
 )
 from corelib.ml import metrics
 from corelib.ml.algorithms.algorithm import Algorithm
+from corelib.ml.artifact_repositories import ArtifactRepo
 from corelib.ml.evaluators.evaluator import Evaluator
+from corelib.ml.transformers.transformer import FeatureTransformer
 
 
 class Estimator:
@@ -29,33 +33,37 @@ class Estimator:
 
     def __init__(
         self,
-        data_repository: data_repositories.DataRepository,
-        evaluator: Evaluator,
+        data_repository: Optional[data_repositories.DataRepository],
+        evaluator: Optional[Evaluator],
         feature_schemas: data_schemas.BaseSchema,
-        target_schema: data_schemas.BaseSchema,
+        target_schema: Optional[data_schemas.BaseSchema],
         algorithm: Algorithm,
+        feature_transformer: FeatureTransformer,
     ):
         """Instantiate a Base Algorithm.
 
         Args:
-            data_repository: data_repositories.DataRepository
-                Data repository to get the data.
-            evaluator: ml.Evaluator
-                Ml model evaluator.
+            data_repository: Optional[data_repositories.DataRepository]
+                Data repository to get the data. Optional for Inference
+            evaluator: Optional[Evaluator]
+                Ml model evaluator. . Optional for Inference.
             feature_schemas: data_schemas.BaseSchema
                 Data schemas that defines feature space.
-            target_schema: data_schemas.BaseSchema
-                Data schemas that defines target.
+            target_schema: Optional[data_schemas.BaseSchema]
+                Data schemas that defines target. Optional for Inference.
             algorithm: BaseEstimator
                 ML algorithm to tran and test.
+            feature_transformer: FeatureTransformer
+                Feature transformer.
         """
         self.data_repository = data_repository
         self.evaluator = evaluator
         self.feature_schemas = feature_schemas
         self.target_schema = target_schema
         self.algorithm = algorithm
+        self.feature_transformer = feature_transformer
 
-        self.artifacts = {}
+        self._version = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
     def creat_model(self) -> Dict[str, Any]:
         """Create a model, ml pipeline logic.
@@ -78,6 +86,8 @@ class Estimator:
             hashed_data=hashed_data,
         )
 
+        self.set_model_artifacts(integration_test_set=test_data.sample(n=1000))
+
         return test_results
 
     @utils.timer
@@ -93,6 +103,9 @@ class Estimator:
         """
         features = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.feature_schemas
+        )
+        features = self.feature_transformer.fit_apply_transformation(
+            features=features
         )
         target = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
@@ -111,6 +124,9 @@ class Estimator:
         """
         features = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.feature_schemas
+        )
+        features = self.feature_transformer.apply_transformation(
+            features=features
         )
         return metrics.Results(
             predictions=self.algorithm.get_predictions(features=features),
@@ -141,3 +157,26 @@ class Estimator:
             true_values=true_values,
         )
         return results
+
+    def set_model_artifacts(self, integration_test_set: pd.DataFrame) -> None:
+        """Set model Artifacts.
+
+        Args:
+            integration_test_set: pd.DataFrame
+                This data frame will be used to testing during deployment.
+
+        Returns:
+            None
+        """
+        integration_test_set["predicted"] = self.predict(
+            data=integration_test_set
+        ).scores
+
+        artifact_repo = ArtifactRepo(
+            feature_schemas=self.feature_schemas,
+            feature_transformer=self.feature_transformer,
+            algorithm=self.algorithm,
+            integration_test_set=integration_test_set,
+        )
+
+        artifact_repo.dump_artifacts()

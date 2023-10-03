@@ -9,7 +9,18 @@ from corelib.utils.cache import (
     cacher,
     make_obj_hash,
 )
+from corelib.utils.io import (
+    dump_artifacts,
+    load_artifacts,
+)
 from corelib.utils.logging import get_logger
 from corelib.utils.time import timer
 
-__all__ = ["cacher", "timer", "get_logger", "make_obj_hash"]
+__all__ = [
+    "cacher",
+    "timer",
+    "get_logger",
+    "make_obj_hash",
+    "dump_artifacts",
+    "load_artifacts",
+]
