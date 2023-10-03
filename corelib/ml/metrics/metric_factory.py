@@ -45,5 +45,4 @@ class MetricFactory:
 
         if metric is None:
             raise NotImplementedError(f"{metric_type} not implemented")
-
         return metric(name=metric.name, params=metric.params)
