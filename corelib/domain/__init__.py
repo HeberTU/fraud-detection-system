@@ -14,7 +14,7 @@ from corelib.domain.data_simulator import (
     get_available_terminals_for_customer,
     simulate_credit_card_transactions_data,
 )
-from corelib.domain.kpis import precision_top_k
+from corelib.domain.kpis import card_precision_top_k
 from corelib.domain.models import (
     CustomerProfile,
     TerminalProfiles,
@@ -32,5 +32,5 @@ __all__ = [
     "simulate_credit_card_transactions_data",
     "TerminalProfiles",
     "Transaction",
-    "precision_top_k",
+    "card_precision_top_k",
 ]

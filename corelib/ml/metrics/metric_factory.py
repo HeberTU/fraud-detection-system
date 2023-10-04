@@ -10,8 +10,8 @@ from __future__ import annotations
 import enum
 
 from corelib.ml.metrics.average_precision import AveragePrecisionScore
+from corelib.ml.metrics.card_precision_top_k import CardPrecisionTopK
 from corelib.ml.metrics.metric import Metric
-from corelib.ml.metrics.Precision_top_k import PrecisionTopK
 from corelib.ml.metrics.roc_auc import ROCAUCScore
 
 
@@ -31,7 +31,7 @@ class MetricFactory:
         self._catalogue = {
             MetricType.AVERAGE_PRECISION: AveragePrecisionScore,
             MetricType.ROC_AUC: ROCAUCScore,
-            MetricType.PRECISION_TOP_K: PrecisionTopK,
+            MetricType.PRECISION_TOP_K: CardPrecisionTopK,
         }
 
     def create(self, metric_type: MetricType) -> Metric:

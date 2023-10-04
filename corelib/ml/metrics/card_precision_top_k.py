@@ -21,10 +21,10 @@ from corelib.ml.metrics.metric import (
 )
 
 
-class PrecisionTopK(Metric):
+class CardPrecisionTopK(Metric):
     """Precision top-k."""
 
-    name: str = "Precision_top_k"
+    name: str = "Card_precision_top_k"
     params: Optional[Dict[str, Any]] = {"top_k": 100}
 
     def measure(self, results: Results, true_values: TrueValues) -> float:
@@ -51,7 +51,7 @@ class PrecisionTopK(Metric):
 
         data["scores"] = results.scores
 
-        mean_precision_top_k = kpis.precision_top_k(
+        mean_precision_top_k = kpis.card_precision_top_k(
             test_data=data, top_k=self.params.get("top_k")
         )
 
