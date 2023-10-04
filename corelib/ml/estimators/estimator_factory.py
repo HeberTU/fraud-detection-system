@@ -31,6 +31,7 @@ class EstimatorFactory:
         evaluator_type: EvaluatorType,
         algorithm_type: AlgorithmType,
         transformer_type: TransformerType,
+        do_hpo: bool,
     ) -> Estimator:
         """Instantiate the estimator.
 
@@ -43,6 +44,8 @@ class EstimatorFactory:
                 Type of ML algorithm to tran and test.
             transformer_type: TransformerType
                 Type of input transformer to be used.
+            do_hpo: bool
+                If True, the estimator will do hyperparameter search.
 
         Returns:
             Evaluator
@@ -68,4 +71,5 @@ class EstimatorFactory:
             customer_id_schema=data_schemas.get("customer_id"),
             algorithm=algorithm,
             feature_transformer=feature_transformer,
+            do_hpo=do_hpo,
         )
