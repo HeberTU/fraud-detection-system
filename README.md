@@ -9,7 +9,7 @@ fraud-detection-system
 - Date of last README.md update: 04.10.2023
 
  
-This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by, and draws heavily from, the techniques and methodologies outlined in the book 'Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook'. 
+This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by and draws heavily from the techniques and methodologies outlined in the book 'Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook.' 
 
 Le Borgne, Yann-Aël et al. (2022). 
 Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook. 
@@ -25,19 +25,19 @@ Credit card fraud has become a pervasive issue worldwide, with the Statistic Bra
 
 ### Fraud Detection System (FDS) Architecture
 
-A credit card Fraud Detection System (FDS) is typically composed of a set of five layers of control, as illustrated in the following image taken from the book.
+A credit card Fraud Detection System (FDS) typically comprises five layers of control, as illustrated in the following image from the book.
 
 ![img_1.png](imgs/fds.png)
 
-1. Terminal: This initial layer conducts basic security checks on all payment requests in real-time.
+1. Terminal: This initial layer conducts basic security checks on all real-time payment requests.
 
-2. Transaction-Blocking Rules: These are expert-driven rules designed to block transactions perceived as potential frauds. They operate without delving into historical data or user profiles.
+2. Transaction-Blocking Rules: These expert-driven rules block transactions perceived as potential fraud. They operate without delving into historical data or user profiles.
 
 3. Scoring Rules: Expert-designed rules that assign a risk score to each transaction based on feature vectors. Higher scores indicate a higher likelihood of the transaction being fraudulent.
 
-4. Data-Driven Model (DDM): This layer leverages machine learning models to predict the likelihood of a transaction being fraudulent. It uses feature vectors derived from transaction data and is devoid of manual interventions.
+4. Data-Driven Model (DDM): This layer leverages machine learning models to predict the likelihood of a transaction being fraudulent. It uses feature vectors derived from transaction data and lacks manual interventions.
 
-5. Investigators: These are the professionals who design the aforementioned rules, handle alerts raised by the DDM, and determine the genuineness of transactions. They are a bridge between automated systems and human judgment, ensuring a thorough examination of potential risks.
+5. Investigators: These professionals design the aforementioned rules, handle alerts raised by the DDM, and determine the genuineness of transactions. They bridge automated systems and human judgment, thoroughly examining potential risks.
 
 Although this repository will focus on building the DDM layer, I'll design this layer holistically, that is, considering not just the ML-related challenges but taking into consideration operational constraints such as latency, business impact (business-related metrics, e.g., Card Precision top-k), artifacts management, etc.
 
@@ -45,10 +45,10 @@ Although this repository will focus on building the DDM layer, I'll design this 
 
 The repository has the following library structure inside the corelib package:
 
-* Data repositories: Data layer, currently only supporting a Transaction data simulator.
+* Data repositories: The data layer currently supports only a Transaction data simulator.
 * Data Schemas: Data validation layer.
-* Domain: A library containing all the domain specific functions and abstractions.
-* ML: A library containing all the ml related module:
+* Domain: A library containing all the domain-specific functions and abstractions.
+* ML: A library containing all the ml related modules:
   *  algorithms: ml algorithms abstraction
   * arifact_repository: abstraction to interact with the artifactory registry for deployment
   * estimator: A composite class used to implement the ML pipeline logic.
@@ -131,7 +131,7 @@ With hyperparameter optimization
 
 Important notes:
 
-* Generating the training data is time intensive, all the generated artifacts are stored in the `.cachedor` path using the utils module.
+* Generating the training data is time intensive; all the generated artifacts are stored in the `.cachedor` path using the utils module.
 * Model artifacts are stored in the `assets` path.
 
 
