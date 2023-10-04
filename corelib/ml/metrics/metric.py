@@ -43,14 +43,14 @@ class TrueValues:
     ----------
     tx_fraud: NDArray
         Whether the transaction was fraudulent
-    tx_timestamp: NDArray
+    tx_datetime: NDArray
         Timestamp for th transaction.
     customer_id: NDArray
         unique identifier for the customer.
     """
 
     tx_fraud: NDArray
-    tx_timestamp: NDArray
+    tx_datetime: NDArray
     customer_id: NDArray
 
 

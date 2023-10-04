@@ -160,7 +160,7 @@ class Estimator:
         true_values = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
         )
-        tx_timestamp = data_schemas.validate_and_coerce_schema(
+        tx_datetime = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.timestamp_schema
         )
         customer_id = data_schemas.validate_and_coerce_schema(
@@ -172,7 +172,7 @@ class Estimator:
             results=results,
             true_values=metrics.TrueValues(
                 tx_fraud=true_values,
-                tx_timestamp=tx_timestamp,
+                tx_datetime=tx_datetime,
                 customer_id=customer_id,
             ),
         )
