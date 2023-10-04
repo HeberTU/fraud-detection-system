@@ -12,6 +12,7 @@ import enum
 from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.algorithms.algorithm_params import (
     DecisionTreeParams,
+    LightGBMHPOParams,
     LightGBMParams,
 )
 from corelib.ml.algorithms.decision_tree import DecisionTree
@@ -30,9 +31,12 @@ class AlgorithmFactory:
 
     def __init__(self):
         """Initialize ml algorithm factory."""
-        self._params = {
+        self._default_params = {
             AlgorithmType.DECISION_TREE: DecisionTreeParams,
             AlgorithmType.LIGHT_GBM: LightGBMParams,
+        }
+        self._hpo_params = {
+            AlgorithmType.LIGHT_GBM: LightGBMHPOParams,
         }
         self._catalogue = {
             AlgorithmType.DECISION_TREE: DecisionTree,
@@ -50,9 +54,16 @@ class AlgorithmFactory:
             BaseEstimator:
                 ML algorithm instance.
         """
-        params = self._params.get(algorithm_type, None)
+        default_params = self._default_params.get(algorithm_type, None)
 
-        if params is None:
+        if default_params is None:
+            raise NotImplementedError(
+                f"{algorithm_type} parameters not implemented"
+            )
+
+        hpo_params = self._hpo_params.get(algorithm_type, None)
+
+        if hpo_params is None:
             raise NotImplementedError(
                 f"{algorithm_type} parameters not implemented"
             )
@@ -62,4 +73,6 @@ class AlgorithmFactory:
         if algorithm is None:
             raise NotImplementedError(f"{algorithm_type} not implemented")
 
-        return algorithm(**params().__dict__)
+        return algorithm(
+            default_params=default_params(), hpo_params=hpo_params()
+        )

@@ -30,6 +30,6 @@ class SyntheticParams:
             pd.Timestamp("2023-09-30") - pd.Timedelta(value=183, unit="days")
         )
     )
-    nb_days: int = 30
+    nb_days: int = 90
     radius: float = 5
     random_state: int = 0

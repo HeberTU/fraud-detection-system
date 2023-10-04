@@ -13,6 +13,7 @@ from typing import (
 
 import lightgbm as lgb
 import pandas as pd
+import skopt
 from numpy.typing import NDArray
 
 from corelib.ml.algorithms.algorithm import Algorithm
@@ -23,52 +24,19 @@ class LightGBM(Algorithm):
 
     def __init__(
         self,
-        objective: str,
-        num_iterations: int,
-        max_depth: int,
-        num_leaves: int,
-        learning_rate: float,
-        bagging_fraction: float,
-        feature_fraction: float,
-        min_gain_to_split: float,
-        min_data_in_leaf: float,
-        lambda_l1: float,
-        lambda_l2: float,
-        num_threads: int,
-        verbose: int,
-        threshold: float,
+        default_params: Dict[str, Any],
+        hpo_params: Dict[str, skopt.space.Dimension],
+        num_threads: int = -1,
+        verbose: int = -1,
+        threshold: float = 0.7,
     ):
         """Instantiate a Light gbm wrapper.
 
         Args:
-            objective: str
-                Name of the loss function.
-            num_iterations: int:
-                Number of boosting iterations.
-            max_depth: int
-                Limit the max depth for tree model. This is used to deal with
-                over-fitting when data is small.
-            num_leaves: int
-                Max number of leaves in one tree
-            learning_rate: float
-                Shrinkage rate
-            feature_fraction: float
-                LightGBM will randomly select a subset of features on each
-                iteration (tree) if feature_fraction is smaller than 1.0. For
-                example, if you set it to 0.8, LightGBM will select 80% of
-                features before training each tree.
-            bagging_fraction: float
-                Like feature_fraction, but this will randomly select part of
-                 data without resampling
-            min_gain_to_split: float
-                The minimal gain to perform split
-            min_data_in_leaf: int
-                Minimal number of data in one leaf. Can be used to deal with
-                over-fitting
-            lambda_l1: float
-                L1 regularization
-            lambda_l2: float
-                L3 regularization
+            default_params: Dict[str, Any]
+                Default hyper-parameters.
+            hpo_params: Dict[str, skopt.space.Dimension]
+                Search dimensions for hpo.
             num_threads: int
                 Number of threads for LightGBM
             verbose: int
@@ -76,26 +44,20 @@ class LightGBM(Algorithm):
             threshold: float
                 Probability threshold to evaluate true when predicting.
         """
-        self.lgb_params = {
-            "objective": objective,
-            "num_iterations": int(num_iterations),
-            "max_depth": int(max_depth),
-            "num_leaves": int(num_leaves),
-            "learning_rate": learning_rate,
-            "bagging_fraction": bagging_fraction,
-            "feature_fraction": feature_fraction,
-            "min_gain_to_split": min_gain_to_split,
-            "min_data_in_leaf": min_data_in_leaf,
-            "lambda_l1": lambda_l1,
-            "lambda_l2": lambda_l2,
-            "num_threads": int(num_threads),
-            "verbose": int(verbose),
-        }
-        self.gbm: Optional[lgb.Booster] = None
+        self.params = default_params.__dict__
+        self.hpo_params = hpo_params.__dict__
+
+        self.num_threads = num_threads
+        self.verbose = verbose
         self.threshold = threshold
 
+        self.gbm: Optional[lgb.Booster] = None
+
     def fit_algorithm(
-        self, features: pd.DataFrame, target: pd.DataFrame
+        self,
+        features: pd.DataFrame,
+        target: pd.DataFrame,
+        hyper_parameters: Dict[str, Any],
     ) -> None:
         """Wraps the fit method.
 
@@ -104,12 +66,16 @@ class LightGBM(Algorithm):
                 Input features to fit the algorithm.
             target: pd.DataFrame
                 Target Feature to fit the algorithm.
+            hyper_parameters: Dict[str, Any]
+                Hyperparameters.
 
         Returns:
             None
         """
+        hyper_parameters["num_threads"] = self.num_threads
+        hyper_parameters["verbose"] = self.verbose
         gbm = lgb.train(
-            params=self.lgb_params,
+            params=hyper_parameters,
             train_set=lgb.Dataset(data=features, label=target),
         )
         self.gbm = gbm
@@ -149,6 +115,6 @@ class LightGBM(Algorithm):
         """
         algorithm_params = {
             "algorithm_name": "LightGBM",
-            **self.lgb_params,
+            **self.params,
         }
         return algorithm_params

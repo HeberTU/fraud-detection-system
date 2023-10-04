@@ -7,6 +7,8 @@ Licence,
 """
 from dataclasses import dataclass
 
+import corelib.ml.hyperparam_optim as hpo
+
 
 @dataclass
 class DecisionTreeParams:
@@ -19,7 +21,37 @@ class DecisionTreeParams:
 
 @dataclass
 class LightGBMParams:
-    """Light GBM parameters."""
+    """Light GBM HPO parameters.
+
+    objective: str
+        Name of the loss function.
+    num_iterations: int:
+        Number of boosting iterations.
+    max_depth: int
+        Limit the max depth for tree model. This is used to deal with
+        over-fitting when data is small.
+    num_leaves: int
+        Max number of leaves in one tree
+    learning_rate: float
+        Shrinkage rate
+    feature_fraction: float
+        LightGBM will randomly select a subset of features on each
+        iteration (tree) if feature_fraction is smaller than 1.0. For
+        example, if you set it to 0.8, LightGBM will select 80% of
+        features before training each tree.
+    bagging_fraction: float
+        Like feature_fraction, but this will randomly select part of
+         data without resampling
+    min_gain_to_split: float
+        The minimal gain to perform split
+    min_data_in_leaf: int
+        Minimal number of data in one leaf. Can be used to deal with
+        over-fitting
+    lambda_l1: float
+        L1 regularization
+    lambda_l2: float
+        L3 regularization
+    """
 
     objective: str = "xentropy"
     num_iterations: int = 100
@@ -32,6 +64,102 @@ class LightGBMParams:
     min_data_in_leaf: float = 1
     lambda_l1: float = 0
     lambda_l2: float = 1
-    num_threads: int = -1
-    verbose: int = -1
-    threshold: float = 0.5
+
+
+@dataclass
+class LightGBMHPOParams:
+    """Light GBM HPO parameters.
+
+    objective: str
+        Name of the loss function.
+    num_iterations: int:
+        Number of boosting iterations.
+    max_depth: int
+        Limit the max depth for tree model. This is used to deal with
+        over-fitting when data is small.
+    num_leaves: int
+        Max number of leaves in one tree
+    learning_rate: float
+        Shrinkage rate
+    feature_fraction: float
+        LightGBM will randomly select a subset of features on each
+        iteration (tree) if feature_fraction is smaller than 1.0. For
+        example, if you set it to 0.8, LightGBM will select 80% of
+        features before training each tree.
+    bagging_fraction: float
+        Like feature_fraction, but this will randomly select part of
+         data without resampling
+    min_gain_to_split: float
+        The minimal gain to perform split
+    min_data_in_leaf: int
+        Minimal number of data in one leaf. Can be used to deal with
+        over-fitting
+    lambda_l1: float
+        L1 regularization
+    lambda_l2: float
+        L3 regularization
+    """
+
+    objective: hpo.CategoricalDimension = hpo.CategoricalDimension(
+        categories=["xentropy"], name="objective"
+    )
+    num_iterations: hpo.IntegerDimension = hpo.IntegerDimension(
+        interval_start=50,
+        interval_end=1000,
+        prior=hpo.Prior.UNIFORM,
+        name="num_iterations",
+    )
+    max_depth: hpo.IntegerDimension = hpo.IntegerDimension(
+        interval_start=3,
+        interval_end=10,
+        prior=hpo.Prior.UNIFORM,
+        name="max_depth",
+    )
+    num_leaves: hpo.IntegerDimension = hpo.IntegerDimension(
+        interval_start=10,
+        interval_end=500,
+        prior=hpo.Prior.UNIFORM,
+        name="num_leaves",
+    )
+    learning_rate: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.001,
+        interval_end=0.3,
+        prior=hpo.Prior.LOG_UNIFORM,
+        name="learning_rate",
+    )
+    bagging_fraction: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.5,
+        interval_end=0.99,
+        prior=hpo.Prior.UNIFORM,
+        name="bagging_fraction",
+    )
+    feature_fraction: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.5,
+        interval_end=0.99,
+        prior=hpo.Prior.UNIFORM,
+        name="feature_fraction",
+    )
+    min_gain_to_split: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.5,
+        interval_end=10,
+        prior=hpo.Prior.UNIFORM,
+        name="min_gain_to_split",
+    )
+    min_data_in_leaf: hpo.IntegerDimension = hpo.IntegerDimension(
+        interval_start=10,
+        interval_end=200,
+        prior=hpo.Prior.UNIFORM,
+        name="min_data_in_leaf",
+    )
+    lambda_l1: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.1,
+        interval_end=50,
+        prior=hpo.Prior.UNIFORM,
+        name="lambda_l1",
+    )
+    lambda_l2: hpo.RealDimension = hpo.RealDimension(
+        interval_start=0.1,
+        interval_end=50,
+        prior=hpo.Prior.UNIFORM,
+        name="lambda_l2",
+    )
