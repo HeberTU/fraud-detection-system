@@ -82,6 +82,10 @@ class Estimator:
 
         self._version = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
+        self.hpo_dimension = Optional[
+            Dict[str, SKOptHyperparameterDimension]
+        ] = None
+
     def creat_model(self) -> Dict[str, Any]:
         """Create a model, ml pipeline logic.
 

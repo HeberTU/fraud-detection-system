@@ -15,8 +15,9 @@ from typing import (
 )
 
 import pandas as pd
-import skopt
 from numpy.typing import NDArray
+
+from corelib.ml.hyperparam_optim import search_dimension
 
 
 class Algorithm(ABC):
@@ -25,7 +26,7 @@ class Algorithm(ABC):
     def __init__(
         self,
         default_params: Dict[str, Any],
-        hpo_params: Dict[str, skopt.space.Dimension],
+        hpo_params: Dict[str, search_dimension.SKOptHyperparameterDimension],
     ):
         """Instantiate a Light gbm wrapper.
 
