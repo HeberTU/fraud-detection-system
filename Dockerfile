@@ -1,14 +1,27 @@
-FROM python:3.8.5
+FROM python:3.8-slim
 
-RUN pip3 install poetry
-RUN poetry config virtualenvs.create false
+ENV PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_CACHE_DIR='/var/cache/poetry'
 
-RUN mkdir -p /cronos
-WORKDIR /cronos
 
-COPY pyproject.toml .
-RUN poetry install
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && curl -sSL https://install.python-poetry.org | python - \
+    && mv $POETRY_HOME/bin/poetry /usr/local/bin \
+    && apt-get purge -y --auto-remove curl
+
+RUN mkdir -p /fraud-detection-system
+WORKDIR /fraud-detection-system
+
+COPY ./pyproject.toml ./poetry.lock* /app/
 
 COPY . .
 
-CMD ["python", "train.py"]
+RUN poetry install -vvv
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
