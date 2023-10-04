@@ -17,7 +17,6 @@ from typing import (
 )
 
 import pandas as pd
-from numpy.typing import NDArray
 
 from corelib import utils
 from corelib.ml import metrics
@@ -72,14 +71,14 @@ class Evaluator(ABC):
         return hashed_object
 
     def evaluate(
-        self, results: metrics.Results, true_values: NDArray
+        self, results: metrics.Results, true_values: metrics.TrueValues
     ) -> Dict[str, float]:
         """Evaluate model predictions.
 
         Args:
             results: metrics.Result.
                 Estimator results.
-            true_values: NDArray
+            true_values: metrics.TrueValues
                 True values that we want to predict.
 
         Returns:
@@ -100,7 +99,7 @@ class Evaluator(ABC):
         estimator_params: Dict[str, Any],
         hashed_data: str,
         results: metrics.Results,
-        true_values: NDArray,
+        true_values: metrics.TrueValues,
     ) -> Dict[str, Any]:
         """Log model evaluation.
 
@@ -111,7 +110,7 @@ class Evaluator(ABC):
                 Hashed representation of the data.
             results: metrics.Results
                 Estimator results.
-            true_values: NDArray
+            true_values:metrics.TrueValues
                 True values that we want to predict.
 
         Returns:

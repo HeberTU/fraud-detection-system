@@ -15,22 +15,43 @@ from typing import (
     Optional,
 )
 
-from numpy.typing import NDArray
 from sklearn.metrics import average_precision_score
 
 from corelib.ml.metrics.metric import (
     Metric,
     Results,
+    TrueValues,
 )
 
 
 class AveragePrecisionScore(Metric):
-    """Area Under the Receiver Operating Characteristic Curve."""
+    """Average precision.
+
+    The Precision-Recall (PR) curve and the Average Precision (as the metric
+    that computes the area under the PR curve) are better suited for fraud
+    detection problems than the ROC curve and the AUC ROC, respectively.
+
+    A classifier that classifies all examples as positive (recall of 1) has a
+    precision of P /(P + N).
+
+    This property makes the Average Precision more interesting than the AUC ROC
+    in a fraud detection problem, since it better reflects the challenge
+    related to the class imbalance problem.
+
+    The Average Precision of a random classifier decreases as the class
+    imbalance ratio increases.
+
+    precision: Pr[Is Fraud | Predict Fraud]: % actual frauds from the predicted
+        fraud & detected / total predicted frauds
+    recall: Pr[Detect Fraud | Fraud]: % of detected frauds
+        fraud & detected / total frauds
+
+    """
 
     name: str = "average_precision_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: TrueValues) -> float:
         """Compute Area Under the Receiver Operating Characteristic Curve.
 
         Args:
@@ -47,7 +68,7 @@ class AveragePrecisionScore(Metric):
             self.params = {}
 
         score = average_precision_score(
-            y_true=true_values,
+            y_true=true_values.tx_fraud,
             y_score=results.scores,
             **self.params,
         )

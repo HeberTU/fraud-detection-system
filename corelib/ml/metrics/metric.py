@@ -21,7 +21,7 @@ from numpy.typing import NDArray
 
 @dataclass
 class Results:
-    """Data structure for storing result form NNModels.
+    """Data structure for storing result the model.
 
     Parameters
     ----------
@@ -36,6 +36,25 @@ class Results:
 
 
 @dataclass
+class TrueValues:
+    """Data structure for storing true values.
+
+    Parameters
+    ----------
+    tx_fraud: NDArray
+        Whether the transaction was fraudulent
+    tx_datetime: NDArray
+        Timestamp for th transaction.
+    customer_id: NDArray
+        unique identifier for the customer.
+    """
+
+    tx_fraud: NDArray
+    tx_datetime: NDArray
+    customer_id: NDArray
+
+
+@dataclass
 class Metric(ABC):
     """ML model mMetric abstraction."""
 
@@ -43,7 +62,7 @@ class Metric(ABC):
     params: Optional[Dict[str, Any]] = None
 
     @abstractmethod
-    def measure(self, results: Results, true_values: NDArray) -> float:
+    def measure(self, results: Results, true_values: TrueValues) -> float:
         """Measure the model performance.
 
         Args:

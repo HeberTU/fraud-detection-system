@@ -64,6 +64,8 @@ class EstimatorFactory:
             evaluator=evaluator,
             feature_schemas=data_schemas.get("feature_space"),
             target_schema=data_schemas.get("target"),
+            timestamp_schema=data_schemas.get("timestamp"),
+            customer_id_schema=data_schemas.get("customer_id"),
             algorithm=algorithm,
             feature_transformer=feature_transformer,
         )

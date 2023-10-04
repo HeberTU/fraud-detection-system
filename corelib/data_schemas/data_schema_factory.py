@@ -10,8 +10,10 @@ from typing import Dict
 from corelib import data_repositories as dr
 from corelib.data_schemas.data_schema import BaseSchema
 from corelib.data_schemas.synthetic_schema import (
+    SyntheticCustomerIDSchema,
     SyntheticFeaturesSchema,
     SyntheticTargetSchema,
+    SyntheticTimeStampSchema,
 )
 
 
@@ -24,6 +26,8 @@ class DataSchemaFactory:
             dr.DataRepositoryType.SYNTHETIC: {
                 "feature_space": SyntheticFeaturesSchema,
                 "target": SyntheticTargetSchema,
+                "timestamp": SyntheticTimeStampSchema,
+                "customer_id": SyntheticCustomerIDSchema,
             }
         }
 

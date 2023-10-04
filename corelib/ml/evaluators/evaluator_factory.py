@@ -29,8 +29,9 @@ class EvaluatorFactory:
         self._params = {EvaluatorType.TIME_EVALUATOR: TimeEvaluatorParams}
         self._catalogue = {EvaluatorType.TIME_EVALUATOR: TimeEvaluator}
         self.metric_type_list = [
-            metrics.MetricType.ROC_AUC,
             metrics.MetricType.AVERAGE_PRECISION,
+            metrics.MetricType.CARD_PRECISION_TOP_K,
+            metrics.MetricType.PERFECT_CARD_PRECISION_TOP_K,
         ]
 
     def create(self, evaluator_type: EvaluatorType) -> Evaluator:

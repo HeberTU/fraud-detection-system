@@ -7,6 +7,7 @@ Licence,
 """
 import pandera as pa
 from pandera.typing import (
+    DateTime,
     Float,
     Int,
     Series,
@@ -44,3 +45,15 @@ class SyntheticTargetSchema(BaseSchema):
     """Synthetic target schema."""
 
     tx_fraud: Series[Int] = pa.Field(nullable=False)
+
+
+class SyntheticTimeStampSchema(BaseSchema):
+    """Synthetic TimeStam schema."""
+
+    tx_datetime: Series[DateTime] = pa.Field(nullable=False)
+
+
+class SyntheticCustomerIDSchema(BaseSchema):
+    """Synthetic TimeStam schema."""
+
+    customer_id: Series[Int] = pa.Field(nullable=False)
