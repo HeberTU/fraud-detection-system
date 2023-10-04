@@ -9,12 +9,12 @@ fraud-detection-system
 - Date of last README.md update: 04.10.2023
 
  
-This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by and draws heavily from the techniques and methodologies outlined in the book 'Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook.' 
+This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by and draws heavily from the techniques and methodologies outlined in the book 'Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook'. 
 
 Le Borgne, Yann-Aël et al. (2022). 
-Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook. 
+[Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook.). 
 Université Libre de Bruxelles.
-Available at: https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook.
+
 
 ## Project Overview
 
