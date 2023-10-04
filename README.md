@@ -60,6 +60,56 @@ The repository has the following library structure inside the corelib package:
 
 ## How to Run Scripts 
 
+## Docker
+
+### Prerequisites
+
+Ensure you have Docker installed on your machine. If not, you can download and install it from [here](https://docs.docker.com/get-docker/).
+
+#### Build the Docker Image
+
+1. Navigate to the directory containing the project
+    ```zsh
+    cd /path/to/fraud-detection-system
+    ```
+
+2. Build the Docker image. We'll name it fraud-detection-system:
+    ```zsh
+    docker build -t fraud-detection-system:latest . 
+    ```
+
+Note: The `.` at the end indicates the current directory which contains your Dockerfile.
+
+#### Running the Container
+
+After building the image, you can run the container using one of the two entry points:
+
+1. **Train**
+This entry point runs the training script.
+    ```zsh
+    docker run -it --name my_fraud_detection_container fraud-detection-system:latest train
+    ```
+
+2. Train with HPO (Hyperparameter Optimization):
+    ```zsh
+    docker run -it --name my_fraud_detection_container fraud-detection-system:latest train_hpo
+    ```
+
+Note:
+
+* -it: These flags are combined to allow for an interactive session.
+
+    * The -i flag keeps the standard input (stdin) open, allowing you to interact with any processes inside the container.
+    * The -t flag allocates a pseudo-TTY, simulating a terminal environment inside the container. 
+  
+  Together, the -it flags let you view logs and output from the execution directly in your terminal, making it feel as though the processes inside the container are running in your terminal session.
+
+
+* --name my_fraud_detection_container: This flag assigns a specific name (my_fraud_detection_container) to your container. Naming your containers makes it easier to manage and reference them later. Without specifying a name, Docker would assign a random name to the container.
+
+
+
+## Local
 ### Prerequisites
 
 1. PyEnv

@@ -5,7 +5,7 @@ description = "This repository contains a robust Machine Learning-based Fraud De
 authors = ["HeberTU <heber.trj.urt@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "fraud_detection_system"}]
+packages = [{include = "corelib"}]
 
 [tool.poetry.dependencies]
 python = "^3.8.5"
