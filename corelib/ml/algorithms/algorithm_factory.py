@@ -22,8 +22,8 @@ from corelib.ml.algorithms.light_gbm import LightGBM
 class AlgorithmType(str, enum.Enum):
     """Available ml algorithms."""
 
-    DECISION_TREE: AlgorithmType = "DECISION_TREE"
-    LIGHT_GBM: AlgorithmType = "LIGHT_GBM"
+    DECISION_TREE: AlgorithmType = "DecisionTree"
+    LIGHT_GBM: AlgorithmType = "LightGBM"
 
 
 class AlgorithmFactory:

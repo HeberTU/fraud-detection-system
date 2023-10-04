@@ -11,6 +11,7 @@ from corelib.ml.algorithms.algorithm_factory import (
     AlgorithmFactory,
     AlgorithmType,
 )
+from corelib.ml.artifact_repositories.artifact_repository import ArtifactRepo
 from corelib.ml.estimators.estimator import Estimator
 from corelib.ml.evaluators.evaluator_factory import (
     EvaluatorFactory,
@@ -72,4 +73,28 @@ class EstimatorFactory:
             algorithm=algorithm,
             feature_transformer=feature_transformer,
             do_hpo=do_hpo,
+        )
+
+    @staticmethod
+    def create_from_artifact_repo(artifact_repo: ArtifactRepo) -> Estimator:
+        """Create an evaluator from an ArtifactRpo.
+
+        Args:
+            artifact_repo: ArtifactRepo
+                Artifact repository.
+
+        Returns:
+            Estimator:
+                estimator instance.
+        """
+        return Estimator(
+            data_repository=None,
+            evaluator=None,
+            feature_schemas=artifact_repo.feature_schemas,
+            target_schema=None,
+            timestamp_schema=None,
+            customer_id_schema=None,
+            algorithm=artifact_repo.algorithm,
+            feature_transformer=artifact_repo.feature_transformer,
+            do_hpo=False,
         )
