@@ -82,7 +82,7 @@ class Estimator:
 
         self._version = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
-        self.hpo_dimension = Optional[
+        self.hpo_dimension: Optional[
             Dict[str, SKOptHyperparameterDimension]
         ] = None
 
