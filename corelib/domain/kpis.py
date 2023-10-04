@@ -8,6 +8,7 @@ Licence,
 from typing import (
     Dict,
     List,
+    Tuple,
     Union,
 )
 
@@ -58,7 +59,7 @@ def card_precision_top_k(
     test_data: pd.DataFrame,
     top_k: int = 100,
     remove_detected_compromised_cards: bool = True,
-) -> Dict[str, float]:
+) -> Tuple[float, float]:
     """Calculate the average card precision top-k metric per day.
 
     Args:
