@@ -270,8 +270,8 @@ class Estimator:
         res_gp = skopt.gp_minimize(
             func=val,
             dimensions=space,
-            n_calls=2,
-            n_random_starts=1,
+            n_calls=20,
+            n_random_starts=2,
             random_state=12345,
         )
 
