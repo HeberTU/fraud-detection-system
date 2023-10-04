@@ -12,6 +12,7 @@ import enum
 from corelib.ml.metrics.average_precision import AveragePrecisionScore
 from corelib.ml.metrics.card_precision_top_k import CardPrecisionTopK
 from corelib.ml.metrics.metric import Metric
+from corelib.ml.metrics.perf_card_precision_top_k import PerfCardPrecisionTopK
 from corelib.ml.metrics.roc_auc import ROCAUCScore
 
 
@@ -20,7 +21,8 @@ class MetricType(str, enum.Enum):
 
     ROC_AUC: MetricType = "ROC_AUC"
     AVERAGE_PRECISION: MetricType = "AVERAGE_PRECISION"
-    PRECISION_TOP_K: MetricType = "PRECISION_TOP_K"
+    CARD_PRECISION_TOP_K: MetricType = "CARD_PRECISION_TOP_K"
+    PERFECT_CARD_PRECISION_TOP_K: MetricType = "PERFECT_CARD_PRECISION_TOP_K"
 
 
 class MetricFactory:
@@ -31,7 +33,8 @@ class MetricFactory:
         self._catalogue = {
             MetricType.AVERAGE_PRECISION: AveragePrecisionScore,
             MetricType.ROC_AUC: ROCAUCScore,
-            MetricType.PRECISION_TOP_K: CardPrecisionTopK,
+            MetricType.CARD_PRECISION_TOP_K: CardPrecisionTopK,
+            MetricType.PERFECT_CARD_PRECISION_TOP_K: PerfCardPrecisionTopK,
         }
 
     def create(self, metric_type: MetricType) -> Metric:

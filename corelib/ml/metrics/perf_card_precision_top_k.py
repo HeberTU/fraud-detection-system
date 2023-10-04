@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Precision top-k metric.
+"""Perfect cards precision top-k.
 
-Created on: 3/10/23
+Created on: 4/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
@@ -21,14 +21,14 @@ from corelib.ml.metrics.metric import (
 )
 
 
-class CardPrecisionTopK(Metric):
-    """Card Precision top-k."""
+class PerfCardPrecisionTopK(Metric):
+    """Perfect Card Precision top-k."""
 
-    name: str = "Card_precision_top_k"
+    name: str = "Perfect_card_precision_top_k"
     params: Optional[Dict[str, Any]] = {"top_k": 100}
 
     def measure(self, results: Results, true_values: TrueValues) -> float:
-        """Compute the card  precision top-k.
+        """Compute the perfect card precision top-k.
 
         Args:
             results: Results
@@ -51,8 +51,8 @@ class CardPrecisionTopK(Metric):
 
         data["scores"] = results.scores
 
-        mean_precision_top_k, _ = kpis.card_precision_top_k(
+        _, perfect_card_precision_top_k = kpis.card_precision_top_k(
             test_data=data, top_k=self.params.get("top_k")
         )
 
-        return mean_precision_top_k
+        return perfect_card_precision_top_k

@@ -30,7 +30,8 @@ class EvaluatorFactory:
         self._catalogue = {EvaluatorType.TIME_EVALUATOR: TimeEvaluator}
         self.metric_type_list = [
             metrics.MetricType.AVERAGE_PRECISION,
-            metrics.MetricType.PRECISION_TOP_K,
+            metrics.MetricType.CARD_PRECISION_TOP_K,
+            metrics.MetricType.PERFECT_CARD_PRECISION_TOP_K,
         ]
 
     def create(self, evaluator_type: EvaluatorType) -> Evaluator:
