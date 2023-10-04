@@ -51,7 +51,7 @@ class CardPrecisionTopK(Metric):
 
         data["scores"] = results.scores
 
-        mean_precision_top_k = kpis.card_precision_top_k(
+        mean_precision_top_k, _ = kpis.card_precision_top_k(
             test_data=data, top_k=self.params.get("top_k")
         )
 
