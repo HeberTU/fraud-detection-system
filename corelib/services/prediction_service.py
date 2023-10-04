@@ -5,7 +5,11 @@ Created on: 4/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+import pandas as pd
+from fastapi.encoders import jsonable_encoder
+
 from corelib.ml.estimators.estimator import Estimator
+from corelib.services.contracts import PredictionRequest
 
 
 class PredictionService:
@@ -15,7 +19,17 @@ class PredictionService:
         """Instantiate the prediction service."""
         self.estimator = estimator
 
-    def make_prediction(self, data) -> float:
-        """Generate predictions using the estimator."""
-        results = self.estimator.predict(data)
+    def make_prediction(self, prediction_request: PredictionRequest) -> float:
+        """Generate predictions using the estimator.
+
+        Args:
+            prediction_request: PredictionRequest
+                Input contract.
+
+        Returns:
+            float
+                prediction.
+        """
+        data = pd.DataFrame(jsonable_encoder(prediction_request), index=[0])
+        results = self.estimator.predict(data=data)
         return results.scores
