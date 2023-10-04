@@ -1,0 +1,4 @@
+.cachedir/*
+.venv/*
+assets/*
+.pytest_cache/*
