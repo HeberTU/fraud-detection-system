@@ -9,6 +9,7 @@ from typing import (
     Any,
     Dict,
     Optional,
+    Union,
 )
 
 import lightgbm as lgb
@@ -80,7 +81,7 @@ class LightGBM(Algorithm):
         )
         self.gbm = gbm
 
-    def get_predictions(self, features: pd.DataFrame) -> NDArray:
+    def get_predictions(self, features: pd.DataFrame) -> Union[NDArray, float]:
         """Wraps the predict method.
 
         Args:
@@ -88,12 +89,12 @@ class LightGBM(Algorithm):
                 Data frame that will be used to generate predictions.
 
         Returns:
-            NDArray:
+            Union[NDArray, float]:
                 model predictions
         """
         return self.gbm.predict(data=features) > self.threshold
 
-    def get_scores(self, features: pd.DataFrame) -> NDArray:
+    def get_scores(self, features: pd.DataFrame) -> Union[NDArray, float]:
         """Wraps the predict log probs method.
 
         Args:
@@ -101,7 +102,7 @@ class LightGBM(Algorithm):
                 Data frame that will be used to generate predictions.
 
         Returns:
-            NDArray:
+            Union[NDArray, float]:
                 model predictions
         """
         return self.gbm.predict(data=features)

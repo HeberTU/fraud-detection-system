@@ -8,11 +8,10 @@ Licence,
 import os
 import pathlib
 import pickle
+from typing import Any
 
 
-def dump_artifacts(
-    obj: object, file_path: pathlib.Path, file_name: str
-) -> None:
+def dump_artifacts(obj: Any, file_path: pathlib.Path, file_name: str) -> None:
     """Dump object to pickle format.
 
     Args:
@@ -30,7 +29,7 @@ def dump_artifacts(
         pickle.dump(obj=obj, file=handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_artifacts(file_path: pathlib.Path) -> object:
+def load_artifacts(file_path: pathlib.Path) -> Any:
     """Load a pickle object from memory.
 
     Args:
