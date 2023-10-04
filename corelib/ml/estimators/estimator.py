@@ -11,10 +11,12 @@ import datetime
 from typing import (
     Any,
     Dict,
+    List,
     Optional,
 )
 
 import pandas as pd
+import skopt
 
 from corelib import (
     data_repositories,
@@ -25,6 +27,11 @@ from corelib.ml import metrics
 from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.artifact_repositories import ArtifactRepo
 from corelib.ml.evaluators.evaluator import Evaluator
+from corelib.ml.hyperparam_optim.search_dimension import (
+    SKOptHyperparameterDimension,
+    get_dimensions,
+    get_hyperparamrs_dict,
+)
 from corelib.ml.transformers.transformer import FeatureTransformer
 
 
@@ -89,7 +96,9 @@ class Estimator:
 
         train_data, test_data = self.evaluator.split(data=processed_data)
 
-        self.fit(data=train_data)
+        self.optimize_and_fit(
+            data=train_data, hpo_dimension=self.algorithm.hpo_params
+        )
 
         test_results = self.evaluate(
             data=test_data,
@@ -101,12 +110,16 @@ class Estimator:
         return test_results
 
     @utils.timer
-    def fit(self, data: pd.DataFrame) -> None:
+    def fit(
+        self, data: pd.DataFrame, hyper_parameters: Dict[str, Any]
+    ) -> None:
         """Fit ML algorithm.
 
         Args:
             data: pd.DataFrame
                 Data that will be used to train the algorithm.
+            hyper_parameters: Dict[str, Any]
+                Hyper parameters.
 
         Returns:
             None
@@ -120,7 +133,9 @@ class Estimator:
         target = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
         )
-        self.algorithm.fit_algorithm(features=features, target=target)
+        self.algorithm.fit_algorithm(
+            features=features, target=target, hyper_parameters=hyper_parameters
+        )
 
     def predict(self, data: pd.DataFrame) -> metrics.Results:
         """Generate model predictions.
@@ -200,3 +215,94 @@ class Estimator:
         )
 
         artifact_repo.dump_artifacts()
+
+    def optimize_and_fit(
+        self,
+        data: pd.DataFrame,
+        hpo_dimension: Dict[str, SKOptHyperparameterDimension],
+    ):
+        """Perform hyperparameter optimization and fit the final model.
+
+        Args:
+            data: pd.DataFrame
+                Data that will be used to train the algorithm.
+            hpo_dimension: Dict[str, skopt.space.Dimension]
+                Hyperparameter dimensions.
+
+        Returns:
+            None
+        """
+        self.algorithm.params = self.hyperparameter_searcher(
+            data=data, hpo_dimension=hpo_dimension
+        )
+        self.fit(data=data, hyper_parameters=self.algorithm.params)
+
+    def hyperparameter_searcher(
+        self,
+        data: pd.DataFrame,
+        hpo_dimension: Dict[str, SKOptHyperparameterDimension],
+    ) -> Dict[str, Any]:
+        """Perform hyperparameter search.
+
+        Args:
+            data: pd.DataFrame
+                Training data.
+            hpo_dimension: Dict[str, SKOptHyperparameterDimension]
+
+        Returns:
+            Dict[str, Any]:
+                Best possible hyperparameter values.
+        """
+        self.hpo_dimension = hpo_dimension
+
+        space = get_dimensions(search_dimensions=hpo_dimension)
+
+        def val(hyper_parameters_list: List[Any]) -> float:
+            """Wrapper function."""
+            return self.validation_pipeline(
+                data, hyper_parameters_list=hyper_parameters_list
+            )
+
+        res_gp = skopt.gp_minimize(
+            func=val,
+            dimensions=space,
+            n_calls=2,
+            n_random_starts=1,
+            random_state=12345,
+        )
+
+        best_params = get_hyperparamrs_dict(
+            search_dimensions=hpo_dimension, hyper_params_list=res_gp.x
+        )
+
+        return best_params
+
+    def validation_pipeline(
+        self, data: pd.DataFrame, hyper_parameters_list: List[Any]
+    ) -> float:
+        """Validate set of hyperparameters.
+
+        Args:
+            data: pd.DataFrame
+                Training data.
+            hyper_parameters_list: List[Any]
+                List of hyperparameters to validate.
+
+        Returns:
+            float:
+                score value.
+        """
+        hyper_parameters = get_hyperparamrs_dict(
+            search_dimensions=self.hpo_dimension,
+            hyper_params_list=hyper_parameters_list,
+        )
+        train_data, validation_data = self.evaluator.split(data=data)
+
+        self.fit(data=train_data, hyper_parameters=hyper_parameters)
+
+        validation_results = self.evaluate(
+            data=validation_data,
+            hashed_data="HPO",
+        )
+
+        return validation_results.get("scores").get("average_precision_score")
