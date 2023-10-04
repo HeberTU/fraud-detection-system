@@ -27,6 +27,7 @@ from corelib.ml import metrics
 from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.artifact_repositories import ArtifactRepo
 from corelib.ml.evaluators.evaluator import Evaluator
+from corelib.ml.hyperparam_optim.hpo_config import HPOConfig
 from corelib.ml.hyperparam_optim.search_dimension import (
     SKOptHyperparameterDimension,
     get_dimensions,
@@ -48,6 +49,7 @@ class Estimator:
         customer_id_schema: Optional[data_schemas.BaseSchema],
         algorithm: Algorithm,
         feature_transformer: FeatureTransformer,
+        do_hpo: bool,
     ):
         """Instantiate a Base Algorithm.
 
@@ -68,6 +70,8 @@ class Estimator:
                 ML algorithm to tran and test.
             feature_transformer: FeatureTransformer
                 Feature transformer.
+            do_hpo: bool
+                If True, the estimator will do hyperparameter search.
         """
         self.data_repository = data_repository
         self.evaluator = evaluator
@@ -81,6 +85,8 @@ class Estimator:
         self.feature_transformer = feature_transformer
 
         self._version = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
+        self.do_hpo = do_hpo
 
         self.hpo_dimension: Optional[
             Dict[str, SKOptHyperparameterDimension]
@@ -236,9 +242,11 @@ class Estimator:
         Returns:
             None
         """
-        self.algorithm.params = self.hyperparameter_searcher(
-            data=data, hpo_dimension=hpo_dimension
-        )
+        if self.do_hpo:
+            self.algorithm.params = self.hyperparameter_searcher(
+                data=data, hpo_dimension=hpo_dimension
+            )
+
         self.fit(data=data, hyper_parameters=self.algorithm.params)
 
     def hyperparameter_searcher(
@@ -270,9 +278,9 @@ class Estimator:
         res_gp = skopt.gp_minimize(
             func=val,
             dimensions=space,
-            n_calls=20,
-            n_random_starts=2,
-            random_state=12345,
+            n_calls=HPOConfig.n_calls,
+            n_random_starts=HPOConfig.n_random_starts,
+            random_state=HPOConfig.random_state,
         )
 
         best_params = get_hyperparamrs_dict(
