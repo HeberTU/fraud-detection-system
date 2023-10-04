@@ -10,18 +10,23 @@ ENV PIP_NO_CACHE_DIR=off \
 
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y --no-install-recommends curl libgomp1 \
     && curl -sSL https://install.python-poetry.org | python - \
     && mv $POETRY_HOME/bin/poetry /usr/local/bin \
     && apt-get purge -y --auto-remove curl
 
+
 RUN mkdir -p /fraud-detection-system
 WORKDIR /fraud-detection-system
 
-COPY ./pyproject.toml ./poetry.lock* /app/
+COPY ./pyproject.toml ./poetry.lock* ./
 
 COPY . .
 
-RUN poetry install -vvv
+# Make the script executable
+RUN chmod +x docker-entrypoint.sh
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+RUN poetry install -vvv --no-root
+
+# Set our script as the default entrypoint
+ENTRYPOINT ["./docker-entrypoint.sh"]
