@@ -5,12 +5,23 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from __future__ import annotations
+
 import enum
 import os
 from pathlib import Path
+from typing import Optional
 
+from pydantic import Field
 from pydantic.types import DirectoryPath
 from pydantic_settings import BaseSettings
+
+
+class Environment(str, enum.Enum):
+    """Available Environments."""
+
+    PROD: Environment = "PROD"
+    TEST: Environment = "TEST"
 
 
 class LogLevels(str, enum.Enum):
@@ -25,6 +36,13 @@ class LogLevels(str, enum.Enum):
 
 class Settings(BaseSettings):
     """Project Settings."""
+
+    class Config:
+        """Loads the dotenv file."""
+
+        env_file: str = ".env"
+
+    ENV: Optional[str] = Field(None, env="ENV")
 
     PROJECT_PATH: DirectoryPath = Path(__file__).parents[2]
 
