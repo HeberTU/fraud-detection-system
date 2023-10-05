@@ -5,10 +5,23 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import (
+    Any,
+    Dict,
+)
+
+import httpx
 import pandas as pd
 import pytest
 from _pytest.fixtures import FixtureRequest
 from pandera.typing import Series
+
+from corelib.entrypoints.api import app
+from corelib.ml.algorithms.algorithm_params import (
+    LightGBMHPOParams,
+    LightGBMParams,
+)
+from corelib.services.contracts import PredictionRequest
 
 
 @pytest.fixture()
@@ -25,3 +38,69 @@ def transactions_df(request: FixtureRequest) -> Series[pd.Timestamp]:
     data["transaction_id"] = range(len(data))
 
     return data.set_index("transaction_id")
+
+
+@pytest.fixture
+def test_data() -> pd.DataFrame:
+    """Data that simulates the testing dataset."""
+    data = {
+        "customer_id": [1, 2, 3, 4, 5, 1, 2, 6, 7, 8],
+        "scores": [0.9, 0.8, 0.7, 0.4, 0.1, 0.95, 0.85, 0.75, 0.5, 0.05],
+        "tx_fraud": [1, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+        "tx_datetime": [
+            "2023-10-01",
+            "2023-10-01",
+            "2023-10-01",
+            "2023-10-01",
+            "2023-10-01",
+            "2023-10-02",
+            "2023-10-02",
+            "2023-10-02",
+            "2023-10-02",
+            "2023-10-02",
+        ],
+    }
+    data = pd.DataFrame(data)
+    data["tx_datetime"] = pd.to_datetime(data["tx_datetime"])
+    return pd.DataFrame(data)
+
+
+@pytest.fixture
+def algorithm_artifacts() -> Dict[str, Any]:
+    """Algorithm artifacts."""
+    features = pd.DataFrame(
+        {"feature1": [1, 2, 3, 4, 5], "feature2": [5, 4, 3, 2, 1]}
+    )
+    target = pd.DataFrame({"target": [1, 0, 1, 0, 1]})
+
+    return {
+        "features": features,
+        "target": target,
+        "default_params": LightGBMParams(),
+        "hpo_params": LightGBMHPOParams(),
+    }
+
+
+@pytest.fixture
+def client() -> httpx.AsyncClient:
+    """Get API for testing."""
+    return httpx.AsyncClient(app=app, base_url="http://test")
+
+
+@pytest.fixture
+def prediction_request() -> PredictionRequest:
+    """Get prediction request instance."""
+    return PredictionRequest(
+        tx_amount=150.75,
+        is_weekday=1,
+        is_night=0,
+        customer_id_mean_tx_amount_1_days=125.50,
+        customer_id_count_tx_amount_1_days=3,
+        customer_id_mean_tx_amount_7_days=110.25,
+        customer_id_count_tx_amount_7_days=20,
+        customer_id_mean_tx_amount_30_days=105.30,
+        customer_id_count_tx_amount_30_days=85,
+        terminal_id_mean_tx_fraud_1_days=0.05,
+        terminal_id_mean_tx_fraud_7_days=0.03,
+        terminal_id_mean_tx_fraud_30_days=0.02,
+    )

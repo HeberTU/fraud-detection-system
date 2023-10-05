@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  ENV: DEV
+  ENV: TEST
 
 jobs:
   lint_test:
