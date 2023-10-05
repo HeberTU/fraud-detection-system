@@ -51,7 +51,7 @@ Although this repository will focus on building the DDM layer, I'll design this 
 * **docker-entrypoint.sh**: Entry script for the Docker container.
 * **LICENSE**: Project's license. 
 * **README.md**: (You're here!) Provides a high-level overview of the repository.
-* ***corelib**: The backbone of our system. 
+* * **corelib**: The backbone of our system. 
   * **config**: System-wide configurations.
   * **data_repositories**: Data interfaces and implementations.
   * **data_schemas**: Data validation and schema-related utilities.
