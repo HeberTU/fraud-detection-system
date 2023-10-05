@@ -8,7 +8,7 @@ Licence,
 import httpx
 import pytest
 
-from corelib.entrypoints.local_estimators import local_estimator
+from corelib.entrypoints.api import estimator
 from corelib.ml.estimators.estimator import Estimator
 from corelib.services.contracts import PredictionRequest
 
@@ -16,7 +16,7 @@ from corelib.services.contracts import PredictionRequest
 @pytest.mark.unit
 def test_initialization() -> None:
     """Test the estimator singleton is correctly instantiated."""
-    assert isinstance(local_estimator, Estimator)
+    assert isinstance(estimator, Estimator)
 
 
 @pytest.mark.unit

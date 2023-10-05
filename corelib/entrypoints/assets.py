@@ -40,7 +40,7 @@ class Assets:
     @staticmethod
     def get_test_assets() -> Estimator:
         """Get tests assets."""
-        return EstimatorFactory.create(
+        return EstimatorFactory().create(
             estimator_type=EstimatorType.FAKE_ESTIMATOR,
             data_repository_type=DataRepositoryType.SYNTHETIC,
             evaluator_type=EvaluatorType.TIME_EVALUATOR,
@@ -52,7 +52,7 @@ class Assets:
     @staticmethod
     def get_prod_assets() -> Estimator:
         """Get prod assets."""
-        return EstimatorFactory.create_from_artifact_repo(
+        return EstimatorFactory().create_from_artifact_repo(
             estimator_type=EstimatorType.ML_ESTIMATOR,
             artifact_repo=ArtifactRepo.load_from_assets(
                 algorithm_type=AlgorithmType.LIGHT_GBM
