@@ -9,6 +9,9 @@ case "$cmd" in
     "train_hpo")
         python train.py --do-hpo
         ;;
+    "serve_dev")
+        uvicorn corelib.entrypoints.api:app --host 0.0.0.0 --port 8000 --reload
+        ;;
     *)
         exec "$@"
         ;;
