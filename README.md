@@ -28,7 +28,7 @@ Credit card fraud has become a pervasive issue worldwide, with the Statistic Bra
 
 ### Fraud Detection System (FDS) Architecture
 
-A credit card Fraud Detection System (FDS) typically comprises five layers of control, as illustrated in the following image from the book.
+A credit card Fraud Detection System (FDS) typically comprises five layers of control, as illustrated in the following image from Le Borgne, Yann-Aël et al. work.
 
 ![img_1.png](imgs/fds.png)
 
