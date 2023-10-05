@@ -5,6 +5,10 @@ Created on: 3/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from __future__ import annotations
+
+import enum
+
 from corelib import data_repositories as dr
 from corelib import data_schemas as ds
 from corelib.ml.algorithms.algorithm_factory import (
@@ -13,6 +17,8 @@ from corelib.ml.algorithms.algorithm_factory import (
 )
 from corelib.ml.artifact_repositories.artifact_repository import ArtifactRepo
 from corelib.ml.estimators.estimator import Estimator
+from corelib.ml.estimators.fake_estimator import FakeEstimator
+from corelib.ml.estimators.ml_estimator import MLEstimator
 from corelib.ml.evaluators.evaluator_factory import (
     EvaluatorFactory,
     EvaluatorType,
@@ -23,11 +29,26 @@ from corelib.ml.transformers.transformers_factory import (
 )
 
 
+class EstimatorType(str, enum.Enum):
+    """Available Estimator."""
+
+    ML_ESTIMATOR: EstimatorType = "ML_ESTIMATOR"
+    FAKE_ESTIMATOR: EstimatorType = "FAKE_ESTIMATOR"
+
+
 class EstimatorFactory:
     """Estimator factory."""
 
-    @staticmethod
+    def __init__(self):
+        """Instantiate an estimator factory."""
+        self._catalogue = {
+            EstimatorType.ML_ESTIMATOR: MLEstimator,
+            EstimatorType.FAKE_ESTIMATOR: FakeEstimator,
+        }
+
     def create(
+        self,
+        estimator_type: EstimatorType,
         data_repository_type: dr.DataRepositoryType,
         evaluator_type: EvaluatorType,
         algorithm_type: AlgorithmType,
@@ -37,6 +58,8 @@ class EstimatorFactory:
         """Instantiate the estimator.
 
         Args:
+            estimator_type: EstimatorType
+                Estimator Type to instantiate.
             data_repository_type: data_repositories.DataRepositoryType
                 Type of data repository to get the data.
             evaluator_type: EvaluatorType
@@ -51,6 +74,11 @@ class EstimatorFactory:
         Returns:
             Evaluator
         """
+        estimator = self._catalogue.get(estimator_type)
+
+        if estimator is None:
+            raise NotImplementedError(f"{estimator_type} not implemented")
+
         data_repository = dr.DataRepositoryFactory().create(
             data_repository_type=data_repository_type
         )
@@ -63,7 +91,7 @@ class EstimatorFactory:
             transformer_type=transformer_type
         )
 
-        return Estimator(
+        return estimator(
             data_repository=data_repository,
             evaluator=evaluator,
             feature_schemas=data_schemas.get("feature_space"),
@@ -75,11 +103,16 @@ class EstimatorFactory:
             do_hpo=do_hpo,
         )
 
-    @staticmethod
-    def create_from_artifact_repo(artifact_repo: ArtifactRepo) -> Estimator:
+    def create_from_artifact_repo(
+        self,
+        estimator_type: EstimatorType,
+        artifact_repo: ArtifactRepo,
+    ) -> Estimator:
         """Create an evaluator from an ArtifactRpo.
 
         Args:
+            estimator_type: EstimatorType
+                Estimator Type to instantiate.
             artifact_repo: ArtifactRepo
                 Artifact repository.
 
@@ -87,7 +120,12 @@ class EstimatorFactory:
             Estimator:
                 estimator instance.
         """
-        return Estimator(
+        estimator = self._catalogue.get(estimator_type)
+
+        if estimator is None:
+            raise NotImplementedError(f"{estimator_type} not implemented")
+
+        return estimator(
             data_repository=None,
             evaluator=None,
             feature_schemas=artifact_repo.feature_schemas,
