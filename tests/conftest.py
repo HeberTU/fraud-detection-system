@@ -5,10 +5,20 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import (
+    Any,
+    Dict,
+)
+
 import pandas as pd
 import pytest
 from _pytest.fixtures import FixtureRequest
 from pandera.typing import Series
+
+from corelib.ml.algorithms.algorithm_params import (
+    LightGBMHPOParams,
+    LightGBMParams,
+)
 
 
 @pytest.fixture()
@@ -50,3 +60,19 @@ def test_data() -> pd.DataFrame:
     data = pd.DataFrame(data)
     data["tx_datetime"] = pd.to_datetime(data["tx_datetime"])
     return pd.DataFrame(data)
+
+
+@pytest.fixture
+def algorithm_artifacts() -> Dict[str, Any]:
+    """Algorithm artifacts."""
+    features = pd.DataFrame(
+        {"feature1": [1, 2, 3, 4, 5], "feature2": [5, 4, 3, 2, 1]}
+    )
+    target = pd.DataFrame({"target": [1, 0, 1, 0, 1]})
+
+    return {
+        "features": features,
+        "target": target,
+        "default_params": LightGBMParams(),
+        "hpo_params": LightGBMHPOParams(),
+    }
