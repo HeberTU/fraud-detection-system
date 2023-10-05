@@ -105,3 +105,18 @@ def test_get_fit_param(algorithm_artifacts: Dict[str, Any]) -> None:
 
     fit_params = algorithm.get_fit_param()
     assert fit_params["algorithm_name"] == "LightGBM"
+
+
+@pytest.mark.unit
+def test_prediction_before_fit(algorithm_artifacts: Dict[str, Any]) -> None:
+    """Test lightgbm raise error when predict before fitting."""
+    algorithm = LightGBM(
+        default_params=algorithm_artifacts.get("default_params"),
+        hpo_params=algorithm_artifacts.get("hpo_params"),
+    )
+
+    with pytest.raises(AttributeError):
+        algorithm.get_predictions(algorithm_artifacts.get("features"))
+
+    with pytest.raises(AttributeError):
+        algorithm.get_scores(algorithm_artifacts.get("features"))
