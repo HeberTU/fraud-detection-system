@@ -10,15 +10,18 @@ from typing import (
     Dict,
 )
 
+import httpx
 import pandas as pd
 import pytest
 from _pytest.fixtures import FixtureRequest
 from pandera.typing import Series
 
+from corelib.entrypoints.api import app
 from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
     LightGBMParams,
 )
+from corelib.services.contracts import PredictionRequest
 
 
 @pytest.fixture()
@@ -76,3 +79,28 @@ def algorithm_artifacts() -> Dict[str, Any]:
         "default_params": LightGBMParams(),
         "hpo_params": LightGBMHPOParams(),
     }
+
+
+@pytest.fixture
+def client() -> httpx.AsyncClient:
+    """Get API for testing."""
+    return httpx.AsyncClient(app=app, base_url="http://test")
+
+
+@pytest.fixture
+def prediction_request() -> PredictionRequest:
+    """Get prediction request instance."""
+    return PredictionRequest(
+        tx_amount=150.75,
+        is_weekday=1,
+        is_night=0,
+        customer_id_mean_tx_amount_1_days=125.50,
+        customer_id_count_tx_amount_1_days=3,
+        customer_id_mean_tx_amount_7_days=110.25,
+        customer_id_count_tx_amount_7_days=20,
+        customer_id_mean_tx_amount_30_days=105.30,
+        customer_id_count_tx_amount_30_days=85,
+        terminal_id_mean_tx_fraud_1_days=0.05,
+        terminal_id_mean_tx_fraud_7_days=0.03,
+        terminal_id_mean_tx_fraud_30_days=0.02,
+    )
