@@ -16,6 +16,7 @@ from corelib import (
 def main(do_hpo: bool):
     """Execute main script."""
     estimator = ml.EstimatorFactory.create(
+        estimator_type=ml.EstimatorType.ML_ESTIMATOR,
         data_repository_type=data_repositories.DataRepositoryType.SYNTHETIC,
         evaluator_type=ml.EvaluatorType.TIME_EVALUATOR,
         algorithm_type=ml.AlgorithmType.LIGHT_GBM,
