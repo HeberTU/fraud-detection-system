@@ -9,11 +9,14 @@ fraud-detection-system
 - Date of last README.md update: 04.10.2023
 
  
-This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by and draws heavily from the techniques and methodologies outlined in the book 'Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook'. 
+This repository guides the construction of a machine learning platform tailored for a fraud detection system. We adhere to core software design principles and adopt best practices in designing machine learning systems throughout. Our approach is inspired by and draws heavily from the techniques and methodologies outlined in the following works: 
 
-Le Borgne, Yann-Aël et al. (2022). 
-[Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook.). 
+1. Le Borgne, Yann-Aël et al. (2022). 
+[Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html). 
 Université Libre de Bruxelles.
+2. Huyen, Chip (2022). [Designing Machine Learning Systems](https://learning.oreilly.com/library/view/designing-machine-learning/9781098107956/).
+3. Martin, Robert C. "Uncle Bob" (2017). [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://learning.oreilly.com/library/view/clean-architecture-a/9780134494272/).
+4. Valliappa Lakshmanan et al. (2020) [Machine Learning Design Patterns](https://learning.oreilly.com/library/view/machine-learning-design/9781098115777/)
 
 
 ## Project Overview
@@ -43,19 +46,27 @@ Although this repository will focus on building the DDM layer, I'll design this 
 
 ### Repository Contents
 
-The repository has the following library structure inside the corelib package:
 
-* Data repositories: The data layer currently supports only a Transaction data simulator.
-* Data Schemas: Data validation layer.
-* Domain: A library containing all the domain-specific functions and abstractions.
-* ML: A library containing all the ml related modules:
-  *  algorithms: ml algorithms abstraction
-  * arifact_repository: abstraction to interact with the artifactory registry for deployment
-  * estimator: A composite class used to implement the ML pipeline logic.
-  * evaluator: Evaluation abstraction, the main implementation is focused on time-correlated evaluation scenarios.
-  * hyperparam_optim: hyperparameter optimization.
-  * metrics: ML & Domain metrics abstraction and implementations.
-  * transformers: Feature transformer abstraction and implementations.
+* **Dockerfile**: Configuration file for creating a Docker container. 
+* **docker-entrypoint.sh**: Entry script for the Docker container.
+* **LICENSE**: Project's license. 
+* **README.md**: (You're here!) Provides a high-level overview of the repository.
+* * **corelib**: The backbone of our system. 
+  * **config**: System-wide configurations.
+  * **data_repositories**: Data interfaces and implementations.
+  * **data_schemas**: Data validation and schema-related utilities.
+  * **domain**: Core business logic, feature transformations, and domain-related utilities.
+  * **entrypoints**: Exposes the API of our application.
+  * **ml**: All things related to machine learning, e.g., Algorithms, metrics, transformers and more.
+  * **services**: Houses core service logic for predictions.
+  * **utils**: Utility scripts for logging, caching, and more. 
+* **train.py**: Script for training the models.
+* **log**: Contains log files. 
+* **poetry.lock & pyproject.toml**: Poetry configuration and lock files for package management. 
+* **pytest**.ini: Configuration file for pytest. 
+* **tests**: Contains unit tests for the project. 
+
+* **imgs**: Any images related to the project (e.g., system diagrams).
 
 
 ## How to Run Scripts 
