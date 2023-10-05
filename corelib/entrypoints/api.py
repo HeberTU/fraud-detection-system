@@ -10,7 +10,8 @@ from fastapi import (
     FastAPI,
 )
 
-from corelib.entrypoints.local_estimators import local_estimator
+from corelib.config import settings
+from corelib.entrypoints.assets import Assets
 from corelib.ml.estimators.estimator import Estimator
 from corelib.services.contracts import (
     PredictionRequest,
@@ -18,13 +19,15 @@ from corelib.services.contracts import (
 )
 from corelib.services.prediction_service import PredictionService
 
+estimator = Assets(settings.ENV)()
+
 app = FastAPI()
 
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(
     request: PredictionRequest,
-    estimator: Estimator = Depends(lambda: local_estimator),
+    estimator: Estimator = Depends(lambda: estimator),
 ) -> PredictionResponse:
     """Prediction endpoint.
 
