@@ -49,6 +49,7 @@ Although this repository will focus on building the DDM layer, I'll design this 
 
 * **Dockerfile**: Configuration file for creating a Docker container. 
 * **docker-entrypoint.sh**: Entry script for the Docker container.
+* **docker-compose.yml**: Configuration file to define and run multi-container Docker applications.
 * **LICENSE**: Project's license. 
 * **README.md**: (You're here!) Provides a high-level overview of the repository.
 * * **corelib**: The backbone of our system. 
@@ -64,8 +65,7 @@ Although this repository will focus on building the DDM layer, I'll design this 
 * **log**: Contains log files. 
 * **poetry.lock & pyproject.toml**: Poetry configuration and lock files for package management. 
 * **pytest**.ini: Configuration file for pytest. 
-* **tests**: Contains unit tests for the project. 
-
+* **tests**: Contains unit tests for the project.
 * **imgs**: Any images related to the project (e.g., system diagrams).
 
 
@@ -93,7 +93,49 @@ Note: The `.` at the end indicates the current directory which contains your Doc
 
 #### Running the Container
 
-After building the image, you can run the container using one of the two entry points:
+With the provided `docker-compose.yml` file, you can easily orchestrate the setup of services and their dependencies. This method offers a more organized and streamlined approach compared to individual `docker run` commands.
+
+1. **Start All Services**:
+
+    To start all services defined in the `docker-compose.yml`:
+    ```zsh
+    docker-compose up
+    ```
+
+    By default, `docker-compose up` will start all services in the background. If you want to run them in the foreground to see the logs, add the `-d` flag:
+    ```zsh
+    docker-compose up -d
+    ```
+
+2. **Set Up and Train**:
+
+    To only initiate the training service:
+    ```zsh
+    docker-compose up training
+    ```
+
+3. **Serve the Model in Development Mode**:
+
+    To serve the model using FastAPI after training:
+    ```zsh
+    docker-compose up serve_dev
+    ```
+
+    Once up, you can access the API at `http://localhost:8000/`.
+
+4. **Stopping and Removing Containers**:
+
+    To stop and remove all containers, networks, and volumes defined in the `docker-compose.yml`:
+    ```zsh
+    docker-compose down
+    ```
+
+    If you also want to remove the images used by the services, add the `--rmi all` flag:
+    ```zsh
+    docker-compose down --rmi all
+    ```
+
+Alternatively, if you're not using `docker-compose`, you can run the container using the given entry points.
 
 1. **Train**
 This entry point runs the training script.
@@ -106,18 +148,21 @@ This entry point runs the training script.
     docker run -it --name my_fraud_detection_container fraud-detection-system:latest train_hpo
     ```
 
-Note:
+#### Notes:
 
-* -it: These flags are combined to allow for an interactive session.
+* **Docker Flags**:
+  * `-it`: These flags are combined to allow for an interactive session.
 
-    * The -i flag keeps the standard input (stdin) open, allowing you to interact with any processes inside the container.
-    * The -t flag allocates a pseudo-TTY, simulating a terminal environment inside the container. 
-  
-  Together, the -it flags let you view logs and output from the execution directly in your terminal, making it feel as though the processes inside the container are running in your terminal session.
+      * The `-i` flag keeps the standard input (stdin) open, allowing you to interact with any processes inside the container.
+      * The `-t` flag allocates a pseudo-TTY, simulating a terminal environment inside the container.
 
+  Together, the `-it` flags let you view logs and output from the execution directly in your terminal, making it feel as though the processes inside the container are running in your terminal session.
 
-* --name my_fraud_detection_container: This flag assigns a specific name (my_fraud_detection_container) to your container. Naming your containers makes it easier to manage and reference them later. Without specifying a name, Docker would assign a random name to the container.
+* **Container Naming**:
+    * `--name my_fraud_detection_container`: This flag assigns a specific name (`my_fraud_detection_container`) to your container. Naming your containers makes it easier to manage and reference them later. Without specifying a name, Docker would assign a random name to the container.
 
+* **Docker Compose**:
+  * Using `docker-compose` helps manage multi-container applications effortlessly. It uses the provided `docker-compose.yml` to set up, link, and manage the lifecycles of the containers.
 
 
 ## Local

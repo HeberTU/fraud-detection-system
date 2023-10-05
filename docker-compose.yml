@@ -1,0 +1,19 @@
+version: '3'
+services:
+  training:
+    image: fraud-detection-system:latest
+    container_name: my_fraud_detection_train_container
+    command: train
+    volumes:
+      - ./assets:/fraud-detection-system/assets
+      - ./.cachedir:/fraud-detection-system/.cachedir
+  serve_dev:
+    image: fraud-detection-system:latest
+    container_name: my_fraud_detection_serve_container
+    command: serve_dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - training
+    volumes:
+      - ./assets:/fraud-detection-system/assets
