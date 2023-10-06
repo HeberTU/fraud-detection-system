@@ -17,6 +17,7 @@ class TimeUnits(str, enum.Enum):
     """Available time unites to aggregate."""
 
     DAYS = "days"
+    MINUTES = "minutes"
 
 
 class AggFunc(str, enum.Enum):
@@ -177,13 +178,12 @@ def aggregate_feature_by_time_window(
 
 
 @utils.cacher
-def get_delta_feature(
+def get_time_since_previous_transaction(
     transactions_df: pd.DataFrame,
-    feature_name: str,
     datetime_col: str,
     grouping_column: str,
 ) -> pd.DataFrame:
-    """Get delta feature from a aggregated feature.
+    """Get time since last transaction per customer.
 
     Args:
         transactions_df: pd.DataFrame
@@ -197,13 +197,12 @@ def get_delta_feature(
 
     Returns:
         pd.DataFrame
-            Data frame with the detla aggregated features.
+            Data frame with last transaction per customer.
     """
     transactions_df = transactions_df.groupby(by=grouping_column).apply(
-        lambda x: get_previous_window_value(
+        lambda x: time_since_previous_transaction(
             data=x,
             datetime_col=datetime_col,
-            feature_name=feature_name,
         )
     )
 
@@ -214,12 +213,11 @@ def get_delta_feature(
     return transactions_df.set_index("transaction_id")
 
 
-def get_previous_window_value(
+def time_since_previous_transaction(
     data: pd.DataFrame,
     datetime_col: str,
-    feature_name: str,
 ) -> pd.DataFrame:
-    """Get previous value for a time aggregated feature.
+    """Get time since last transaction.
 
         data: pd.DataFrame
             Data frame to be aggregated
@@ -230,15 +228,17 @@ def get_previous_window_value(
 
     Returns:
         pd.DataFrame:
-            Data with delayed value.
+            Data with time since last transaction.
     """
     data = data.sort_values(datetime_col)
-    data["delayed_value"] = data[feature_name].shift(periods=1)
+    data["last_datetime"] = data[datetime_col].shift(periods=1)
 
-    data["delta_" + feature_name] = data[feature_name] / data["delayed_value"]
+    data["time_since_last_tx"] = (
+        data[datetime_col] - data["last_datetime"]
+    ).dt.seconds
 
-    data["delta_" + feature_name] = data["delta_" + feature_name].fillna(1)
+    data["time_since_last_tx"] = data["time_since_last_tx"].fillna(0)
 
-    data = data.drop(columns=["delayed_value"])
+    data = data.drop(columns=["last_datetime"])
 
     return data

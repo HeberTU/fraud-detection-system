@@ -66,6 +66,12 @@ class Local(DataRepository):
         Returns:
             pd.DataFrame: Credit card transactional data.
         """
+        data = feature_transformations.get_time_since_previous_transaction(
+            transactions_df=data,
+            datetime_col="tx_datetime",
+            grouping_column="customer_id",
+        )
+
         data = feature_transformations.aggregate_feature(
             transactions_df=data,
             windows_size_in_days=[1, 7, 30],
@@ -80,18 +86,20 @@ class Local(DataRepository):
             grouping_column="customer_id",
             delay_period=0,
         )
-        feature_to_delay = [
-            col
-            for col in data.columns
-            if "customer_id_count_tx_amount_" in col
-        ]
-        for feature_name in feature_to_delay:
-            data = feature_transformations.get_delta_feature(
-                transactions_df=data,
-                feature_name=feature_name,
-                datetime_col="tx_amount",
-                grouping_column="customer_id",
-            )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 7],
+            time_unit=feature_transformations.TimeUnits.DAYS,
+            feature_name="time_since_last_tx",
+            agg_func_list=[
+                feature_transformations.AggFunc.MEAN,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="customer_id",
+            delay_period=0,
+        )
 
         data = feature_transformations.aggregate_feature(
             transactions_df=data,

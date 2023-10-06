@@ -37,13 +37,11 @@ class LocalFeaturesSchema(BaseSchema):
     sector_id_mean_tx_fraud_1_days: Series[Float] = pa.Field(nullable=False)
     sector_id_mean_tx_fraud_7_days: Series[Float] = pa.Field(nullable=False)
     sector_id_mean_tx_fraud_30_days: Series[Float] = pa.Field(nullable=False)
-    delta_customer_id_count_tx_amount_1_days: Series[Float] = pa.Field(
+    time_since_last_tx: Series[Int] = pa.Field(nullable=False)
+    customer_id_mean_time_since_last_tx_1_days: Series[Float] = pa.Field(
         nullable=False
     )
-    delta_customer_id_count_tx_amount_7_days: Series[Float] = pa.Field(
-        nullable=False
-    )
-    delta_customer_id_count_tx_amount_30_days: Series[Float] = pa.Field(
+    customer_id_mean_time_since_last_tx_7_days: Series[Float] = pa.Field(
         nullable=False
     )
 
