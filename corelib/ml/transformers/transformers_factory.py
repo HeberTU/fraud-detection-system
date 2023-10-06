@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import enum
 
+from corelib.ml.transformers.day_linear_transformer import DayLinearTransformer
 from corelib.ml.transformers.identity import IdentityTransformer
 from corelib.ml.transformers.min_max import MinMaxTransformer
 from corelib.ml.transformers.standar import StandardTransformer
+from corelib.ml.transformers.time_cos_transformer import TimeCosTransformer
+from corelib.ml.transformers.time_sin_transformer import TimeSinTransformer
 from corelib.ml.transformers.transformer import FeatureTransformer
 
 
@@ -21,6 +24,9 @@ class TransformerType(str, enum.Enum):
     STANDARD_SCALER: TransformerType = "STANDARD_SCALER"
     MIN_MAX_SCALER: TransformerType = "MIN_MAX_SCALER"
     IDENTITY: TransformerType = "IDENTITY"
+    TIME_COS: TransformerType = "TIME_COS"
+    TIME_SIN: TransformerType = "TIME_SIN"
+    DAY_LINEAR: TransformerType = "DAY_LINEAR"
 
 
 class TransformerFactory:
@@ -32,11 +38,18 @@ class TransformerFactory:
             TransformerType.STANDARD_SCALER: {},
             TransformerType.MIN_MAX_SCALER: {},
             TransformerType.IDENTITY: {},
+            TransformerType.TIME_COS: {},
+            TransformerType.TIME_SIN: {},
+            TransformerType.DAY_LINEAR: {},
         }
+
         self._catalogue = {
             TransformerType.STANDARD_SCALER: StandardTransformer,
             TransformerType.MIN_MAX_SCALER: MinMaxTransformer,
             TransformerType.IDENTITY: IdentityTransformer,
+            TransformerType.TIME_COS: TimeCosTransformer,
+            TransformerType.TIME_SIN: TimeSinTransformer,
+            TransformerType.DAY_LINEAR: DayLinearTransformer,
         }
 
     def create(self, transformer_type: TransformerType) -> FeatureTransformer:
