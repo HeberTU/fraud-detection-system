@@ -9,8 +9,12 @@ from __future__ import annotations
 
 import enum
 
-from corelib.data_repositories.data_repository_params import SyntheticParams
+from corelib.data_repositories.data_repository_params import (
+    LocalParams,
+    SyntheticParams,
+)
 from corelib.data_repositories.data_reposotory import DataRepository
+from corelib.data_repositories.local_repository import Local
 from corelib.data_repositories.synthetic_data_repository import Synthetic
 
 
@@ -18,6 +22,7 @@ class DataRepositoryType(str, enum.Enum):
     """Available Data Repositories."""
 
     SYNTHETIC: DataRepositoryType = "SYNTHETIC"
+    LOCAL: DataRepositoryType = "LOCAL"
 
 
 class DataRepositoryFactory:
@@ -25,8 +30,14 @@ class DataRepositoryFactory:
 
     def __init__(self):
         """Initialize data repository factory."""
-        self._params = {DataRepositoryType.SYNTHETIC: SyntheticParams}
-        self._catalogue = {DataRepositoryType.SYNTHETIC: Synthetic}
+        self._params = {
+            DataRepositoryType.SYNTHETIC: SyntheticParams,
+            DataRepositoryType.LOCAL: LocalParams,
+        }
+        self._catalogue = {
+            DataRepositoryType.SYNTHETIC: Synthetic,
+            DataRepositoryType.LOCAL: Local,
+        }
 
     def create(
         self, data_repository_type: DataRepositoryType

@@ -33,3 +33,10 @@ class SyntheticParams:
     nb_days: int = 90
     radius: float = 5
     random_state: int = 0
+
+
+@dataclass
+class LocalParams:
+    """Local data repository parameters."""
+
+    file_name: str = "transactions.csv"
