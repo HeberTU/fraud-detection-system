@@ -66,15 +66,6 @@ class Local(DataRepository):
         Returns:
             pd.DataFrame: Credit card transactional data.
         """
-        data = data.assign(
-            is_weekday=lambda row: feature_transformations.is_weekday(
-                tx_datetime=row.tx_datetime,
-            ),
-            is_night=lambda row: feature_transformations.is_night(
-                tx_datetime=row.tx_datetime,
-            ),
-        )
-
         data = feature_transformations.aggregate_feature(
             transactions_df=data,
             windows_size_in_days=[1, 7, 30],
@@ -106,19 +97,19 @@ class Local(DataRepository):
         )
 
         data = data.assign(
-            terminal_id_mean_tx_fraud_1_days=(
+            sector_id_mean_tx_fraud_1_days=(
                 lambda x: (
                     x.sector_id_sum_tx_fraud_1_days
-                    / x.sector_id_id_count_tx_fraud_1_days
+                    / x.sector_id_count_tx_fraud_1_days
                 )
             ),
-            terminal_id_mean_tx_fraud_7_days=(
+            sector_id_mean_tx_fraud_7_days=(
                 lambda x: (
                     x.sector_id_sum_tx_fraud_7_days
                     / x.sector_id_count_tx_fraud_7_days
                 )
             ),
-            terminal_id_mean_tx_fraud_30_days=(
+            sector_id_mean_tx_fraud_30_days=(
                 lambda x: (
                     x.sector_id_sum_tx_fraud_30_days
                     / x.sector_id_count_tx_fraud_30_days

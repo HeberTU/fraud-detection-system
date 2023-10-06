@@ -105,9 +105,9 @@ def encode_day_time(
 
     seconds_in_day = 24 * 60 * 60
     seconds_passed = (
-        tx_datetime.hour * 60 * 60
-        + tx_datetime.minute * 60
-        + tx_datetime.second
+        tx_datetime.dt.hour * 60 * 60
+        + tx_datetime.dt.minute * 60
+        + tx_datetime.dt.second
     )
 
     return func(seconds_passed / seconds_in_day)

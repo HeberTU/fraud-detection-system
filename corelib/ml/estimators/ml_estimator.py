@@ -73,10 +73,10 @@ class MLEstimator(Estimator):
         Returns:
             None
         """
+        data = self.transformer_chain.fit_transform(features=data)
         features = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.feature_schemas
         )
-        features = self.transformer_chain.fit_transform(features=features)
         target = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.target_schema
         )
@@ -94,10 +94,11 @@ class MLEstimator(Estimator):
         Returns:
             metrics.Results
         """
+        features = self.transformer_chain.transform(features=data)
         features = data_schemas.validate_and_coerce_schema(
-            data=data, schema_class=self.feature_schemas
+            data=features, schema_class=self.feature_schemas
         )
-        features = self.transformer_chain.transform(features=features)
+
         return metrics.Results(
             predictions=self.algorithm.get_predictions(features=features),
             scores=self.algorithm.get_scores(features=features),
