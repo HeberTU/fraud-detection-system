@@ -138,3 +138,33 @@ def test_aggregate_feature_by_time_window_with_delay(
     assert transactions_df[
         "customer_id_sum_tx_amount_3_days"
     ].mean() == pytest.approx(2.714, 0.001)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "transactions_df",
+    [
+        {
+            "date_range_kwargs": {
+                "start": pd.to_datetime("2023-10-01"),
+                "end": pd.to_datetime("2023-10-07"),
+                "periods": 7,
+            }
+        }
+    ],
+    indirect=True,
+)
+def test_get_previous_window_value(
+    transactions_df: pd.DataFrame,
+) -> None:
+    """Test get_previous_window_value."""
+    transactions_df.tx_amount += 1
+    result = feature_transformations.get_previous_window_value(
+        data=transactions_df,
+        datetime_col="tx_datetime",
+        feature_name="tx_amount",
+    )
+    assert "delta_tx_amount" in result.columns
+
+    assert result.delta_tx_amount.mean() == pytest.approx(1.349, 0.001)
+    assert result.delta_tx_amount.sum() == pytest.approx(9.45, 0.001)

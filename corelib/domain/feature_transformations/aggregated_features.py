@@ -174,3 +174,71 @@ def aggregate_feature_by_time_window(
     data = data.reset_index().set_index(keys=index_name)
 
     return data
+
+
+@utils.cacher
+def get_delta_feature(
+    transactions_df: pd.DataFrame,
+    feature_name: str,
+    datetime_col: str,
+    grouping_column: str,
+) -> pd.DataFrame:
+    """Get delta feature from a aggregated feature.
+
+    Args:
+        transactions_df: pd.DataFrame
+            Transactions data frame.
+        feature_name: str
+            Name of the feature that will be transformed.
+        datetime_col: str
+            Name of the timestamp column.
+        grouping_column: str
+            Outer grouping variable
+
+    Returns:
+        pd.DataFrame
+            Data frame with the detla aggregated features.
+    """
+    transactions_df = transactions_df.groupby(by=grouping_column).apply(
+        lambda x: get_previous_window_value(
+            data=x,
+            datetime_col=datetime_col,
+            feature_name=feature_name,
+        )
+    )
+
+    transactions_df = transactions_df.reset_index(drop=True)
+
+    transactions_df["transaction_id"] = range(len(transactions_df))
+
+    return transactions_df.set_index("transaction_id")
+
+
+def get_previous_window_value(
+    data: pd.DataFrame,
+    datetime_col: str,
+    feature_name: str,
+) -> pd.DataFrame:
+    """Get previous value for a time aggregated feature.
+
+        data: pd.DataFrame
+            Data frame to be aggregated
+        feature_name: str
+            Name of the feature that will be transformed.
+        datetime_col: str
+            Name of the timestamp column.
+
+    Returns:
+        pd.DataFrame:
+            Data with delayed value.
+    """
+    data = data.sort_values(datetime_col)
+    data["delayed_value"] = data[feature_name].shift(periods=1)
+
+    data["delta_" + feature_name] = data[feature_name] / data["delayed_value"]
+
+    data["delta_" + feature_name] = data["delta_" + feature_name].fillna(1)
+
+    data = data.drop(columns=["delayed_value"])
+
+    return data

@@ -10,6 +10,8 @@ from corelib.domain.feature_transformations.aggregated_features import (
     TimeUnits,
     aggregate_feature,
     aggregate_feature_by_time_window,
+    get_delta_feature,
+    get_previous_window_value,
 )
 from corelib.domain.feature_transformations.binary_encoding import (
     is_night,
@@ -23,4 +25,6 @@ __all__ = [
     "is_weekday",
     "is_night",
     "TimeUnits",
+    "get_delta_feature",
+    "get_previous_window_value",
 ]

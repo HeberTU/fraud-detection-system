@@ -80,6 +80,18 @@ class Local(DataRepository):
             grouping_column="customer_id",
             delay_period=0,
         )
+        feature_to_delay = [
+            col
+            for col in data.columns
+            if "customer_id_count_tx_amount_" in col
+        ]
+        for feature_name in feature_to_delay:
+            data = feature_transformations.get_delta_feature(
+                transactions_df=data,
+                feature_name=feature_name,
+                datetime_col="tx_amount",
+                grouping_column="customer_id",
+            )
 
         data = feature_transformations.aggregate_feature(
             transactions_df=data,
