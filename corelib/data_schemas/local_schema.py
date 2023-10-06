@@ -17,7 +17,7 @@ from corelib.data_schemas.data_schema import BaseSchema
 
 
 class LocalFeaturesSchema(BaseSchema):
-    """Synthetic feature space schema."""
+    """Local feature space schema."""
 
     tx_amount: Series[Float] = pa.Field(nullable=False)
     is_weekday: Series[Int] = pa.Field(nullable=False)
@@ -42,13 +42,13 @@ class LocalFeaturesSchema(BaseSchema):
 
 
 class LocalTargetSchema(BaseSchema):
-    """Synthetic target schema."""
+    """Local target schema."""
 
     tx_fraud: Series[Int] = pa.Field(nullable=False)
 
 
 class LocalTimeStampSchema(BaseSchema):
-    """Synthetic TimeStam schema."""
+    """Local TimeStam schema."""
 
     tx_datetime: Series[DateTime] = pa.Field(nullable=False)
 
