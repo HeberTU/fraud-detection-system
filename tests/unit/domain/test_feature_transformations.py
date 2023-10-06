@@ -147,24 +147,23 @@ def test_aggregate_feature_by_time_window_with_delay(
         {
             "date_range_kwargs": {
                 "start": pd.to_datetime("2023-10-01"),
-                "end": pd.to_datetime("2023-10-07"),
-                "periods": 7,
+                "periods": 10,
+                "freq": "H",
             }
         }
     ],
     indirect=True,
 )
-def test_get_previous_window_value(
+def test_time_since_previous_transaction(
     transactions_df: pd.DataFrame,
 ) -> None:
     """Test get_previous_window_value."""
     transactions_df.tx_amount += 1
-    result = feature_transformations.get_previous_window_value(
+    result = feature_transformations.time_since_previous_transaction(
         data=transactions_df,
         datetime_col="tx_datetime",
-        feature_name="tx_amount",
     )
-    assert "delta_tx_amount" in result.columns
+    assert "time_since_last_tx" in result.columns
 
-    assert result.delta_tx_amount.mean() == pytest.approx(1.349, 0.001)
-    assert result.delta_tx_amount.sum() == pytest.approx(9.45, 0.001)
+    assert result.time_since_last_tx.mean() == pytest.approx(3240, 0.001)
+    assert result.time_since_last_tx.sum() == pytest.approx(32400, 0.001)
