@@ -58,22 +58,26 @@ class TransformerChainFactory:
             ]
         }
 
-    def create(self, data_repository: DataRepositoryType) -> TransformerChain:
+    def create(
+        self, data_repository_type: DataRepositoryType
+    ) -> TransformerChain:
         """Instantiate a TransformerChain.
 
         Args:
-            data_repository: DataRepositoryType
+            data_repository_type: DataRepositoryType
                 data repository type.
 
         Returns:
             TransformerChain:
                 Instance of transformer chain.
         """
-        transformed_feature_list = self._transformations.get(data_repository)
+        transformed_feature_list = self._transformations.get(
+            data_repository_type
+        )
 
         if transformed_feature_list is None:
             raise NotImplementedError(
-                f"TransformerChain for {data_repository} not implemented"
+                f"TransformerChain for {data_repository_type} not implemented"
             )
 
         return TransformerChain(

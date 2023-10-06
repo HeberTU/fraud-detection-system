@@ -23,10 +23,7 @@ from corelib.ml.evaluators.evaluator_factory import (
     EvaluatorFactory,
     EvaluatorType,
 )
-from corelib.ml.transformers.transformers_factory import (
-    TransformerFactory,
-    TransformerType,
-)
+from corelib.ml.transformers.transformer_chain import TransformerChainFactory
 
 
 class EstimatorType(str, enum.Enum):
@@ -52,7 +49,6 @@ class EstimatorFactory:
         data_repository_type: dr.DataRepositoryType,
         evaluator_type: EvaluatorType,
         algorithm_type: AlgorithmType,
-        transformer_type: TransformerType,
         do_hpo: bool,
     ) -> Estimator:
         """Instantiate the estimator.
@@ -66,8 +62,6 @@ class EstimatorFactory:
                 Type of Ml model evaluator.
             algorithm_type: AlgorithmType
                 Type of ML algorithm to tran and test.
-            transformer_type: TransformerType
-                Type of input transformer to be used.
             do_hpo: bool
                 If True, the estimator will do hyperparameter search.
 
@@ -87,8 +81,8 @@ class EstimatorFactory:
             data_repository_type=data_repository_type
         )
         algorithm = AlgorithmFactory().create(algorithm_type=algorithm_type)
-        feature_transformer = TransformerFactory().create(
-            transformer_type=transformer_type
+        transformer_chain = TransformerChainFactory().create(
+            data_repository_type=data_repository_type
         )
 
         return estimator(
@@ -99,7 +93,7 @@ class EstimatorFactory:
             timestamp_schema=data_schemas.get("timestamp"),
             customer_id_schema=data_schemas.get("customer_id"),
             algorithm=algorithm,
-            feature_transformer=feature_transformer,
+            transformer_chain=transformer_chain,
             do_hpo=do_hpo,
         )
 
@@ -133,6 +127,6 @@ class EstimatorFactory:
             timestamp_schema=None,
             customer_id_schema=None,
             algorithm=artifact_repo.algorithm,
-            feature_transformer=artifact_repo.feature_transformer,
+            transformer_chain=artifact_repo.transformer_chain,
             do_hpo=False,
         )
