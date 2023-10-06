@@ -51,6 +51,10 @@ class Settings(BaseSettings):
     if not os.path.exists(LOG_PATH):
         os.makedirs(LOG_PATH)
 
+    DATA_PATH: DirectoryPath = PROJECT_PATH / "data"
+    if not os.path.exists(DATA_PATH):
+        os.makedirs(DATA_PATH)
+
     CACH_PATH: DirectoryPath = PROJECT_PATH / ".cachedir"
     if not os.path.exists(CACH_PATH):
         os.makedirs(CACH_PATH)
