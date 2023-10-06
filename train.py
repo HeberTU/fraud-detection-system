@@ -20,7 +20,6 @@ def main(do_hpo: bool):
         data_repository_type=data_repositories.DataRepositoryType.SYNTHETIC,
         evaluator_type=ml.EvaluatorType.TIME_EVALUATOR,
         algorithm_type=ml.AlgorithmType.LIGHT_GBM,
-        transformer_type=ml.TransformerType.MIN_MAX_SCALER,
         do_hpo=do_hpo,
     )
 

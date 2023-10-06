@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Synthetic Data Schema.
+"""Local Data Schema.
 
-Created on: 3/10/23
+Created on: 6/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
@@ -16,8 +16,8 @@ from pandera.typing import (
 from corelib.data_schemas.data_schema import BaseSchema
 
 
-class SyntheticFeaturesSchema(BaseSchema):
-    """Synthetic feature space schema."""
+class LocalFeaturesSchema(BaseSchema):
+    """Local feature space schema."""
 
     tx_amount: Series[Float] = pa.Field(nullable=False)
     customer_id_mean_tx_amount_1_days: Series[Float] = pa.Field(nullable=False)
@@ -34,27 +34,27 @@ class SyntheticFeaturesSchema(BaseSchema):
     customer_id_count_tx_amount_30_days: Series[Float] = pa.Field(
         nullable=False
     )
-    terminal_id_mean_tx_fraud_1_days: Series[Float] = pa.Field(nullable=False)
-    terminal_id_mean_tx_fraud_7_days: Series[Float] = pa.Field(nullable=False)
-    terminal_id_mean_tx_fraud_30_days: Series[Float] = pa.Field(nullable=False)
+    sector_id_mean_tx_fraud_1_days: Series[Float] = pa.Field(nullable=False)
+    sector_id_mean_tx_fraud_7_days: Series[Float] = pa.Field(nullable=False)
+    sector_id_mean_tx_fraud_30_days: Series[Float] = pa.Field(nullable=False)
     tx_day_linear: Series[Int] = pa.Field(nullable=False)
     tx_time_cos: Series[Float] = pa.Field(nullable=False)
     tx_time_sin: Series[Float] = pa.Field(nullable=False)
 
 
-class SyntheticTargetSchema(BaseSchema):
-    """Synthetic target schema."""
+class LocalTargetSchema(BaseSchema):
+    """Local target schema."""
 
     tx_fraud: Series[Int] = pa.Field(nullable=False)
 
 
-class SyntheticTimeStampSchema(BaseSchema):
-    """Synthetic TimeStam schema."""
+class LocalTimeStampSchema(BaseSchema):
+    """Local TimeStam schema."""
 
     tx_datetime: Series[DateTime] = pa.Field(nullable=False)
 
 
-class SyntheticCustomerIDSchema(BaseSchema):
+class LocalCustomerIDSchema(BaseSchema):
     """Synthetic TimeStam schema."""
 
     customer_id: Series[Int] = pa.Field(nullable=False)

@@ -24,7 +24,7 @@ from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
     LightGBMParams,
 )
-from corelib.ml.transformers.transformers_factory import TransformerFactory
+from corelib.ml.transformers.transformer_chain import TransformerChainFactory
 from corelib.services.contracts import PredictionRequest
 
 
@@ -115,19 +115,18 @@ def ml_artifacts(request: FixtureRequest) -> Dict[str, Any]:
     """Create ml artifacts."""
     data_repository_type = request.param.get("data_repository_type")
     algorithm_type = request.param.get("algorithm_type")
-    transformer_type = request.param.get("transformer_type")
     data_schemas = DataSchemaFactory().create(
         data_repository_type=data_repository_type
     )
     algorithm = AlgorithmFactory().create(algorithm_type=algorithm_type)
-    feature_transformer = TransformerFactory().create(
-        transformer_type=transformer_type
+    transformer_chain = TransformerChainFactory().create(
+        data_repository_type=data_repository_type
     )
     integration_test_set = pd.DataFrame()
 
     return {
         "feature_schemas": data_schemas,
-        "feature_transformer": feature_transformer,
+        "transformer_chain": transformer_chain,
         "algorithm": algorithm,
         "integration_test_set": integration_test_set,
     }

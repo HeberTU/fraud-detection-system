@@ -9,6 +9,12 @@ from typing import Dict
 
 from corelib import data_repositories as dr
 from corelib.data_schemas.data_schema import BaseSchema
+from corelib.data_schemas.local_schema import (
+    LocalCustomerIDSchema,
+    LocalFeaturesSchema,
+    LocalTargetSchema,
+    LocalTimeStampSchema,
+)
 from corelib.data_schemas.synthetic_schema import (
     SyntheticCustomerIDSchema,
     SyntheticFeaturesSchema,
@@ -28,7 +34,13 @@ class DataSchemaFactory:
                 "target": SyntheticTargetSchema,
                 "timestamp": SyntheticTimeStampSchema,
                 "customer_id": SyntheticCustomerIDSchema,
-            }
+            },
+            dr.DataRepositoryType.LOCAL: {
+                "feature_space": LocalFeaturesSchema,
+                "target": LocalTargetSchema,
+                "timestamp": LocalTimeStampSchema,
+                "customer_id": LocalCustomerIDSchema,
+            },
         }
 
     def create(

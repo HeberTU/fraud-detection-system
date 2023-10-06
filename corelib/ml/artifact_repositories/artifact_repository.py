@@ -18,7 +18,7 @@ from corelib import (
 )
 from corelib.ml.algorithms.algorithm import Algorithm
 from corelib.ml.algorithms.algorithm_factory import AlgorithmType
-from corelib.ml.transformers.transformer import FeatureTransformer
+from corelib.ml.transformers.transformer_chain import TransformerChain
 
 
 @dataclass
@@ -26,7 +26,7 @@ class ArtifactRepo:
     """ML Algorithm artifacts."""
 
     feature_schemas: data_schemas.BaseSchema
-    feature_transformer: FeatureTransformer
+    transformer_chain: TransformerChain
     algorithm: Algorithm
     integration_test_set: pd.DataFrame
 
@@ -58,8 +58,8 @@ class ArtifactRepo:
             feature_schemas=utils.load_artifacts(
                 file_path=files_path / "feature_schemas.pickle"
             ),
-            feature_transformer=utils.load_artifacts(
-                file_path=files_path / "feature_transformer.pickle"
+            transformer_chain=utils.load_artifacts(
+                file_path=files_path / "transformer_chain.pickle"
             ),
             algorithm=utils.load_artifacts(
                 file_path=files_path / "algorithm.pickle"

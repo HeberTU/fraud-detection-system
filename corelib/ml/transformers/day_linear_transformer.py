@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-"""Standard feature transformer.
+"""DayLinearTransformer..
 
-Created on: 3/10/23
+Created on: 6/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
 from typing import Union
 
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
+from corelib.domain.feature_transformations.time_enconding import (
+    TimeEncoderFunc,
+    encode_day_of_week,
+)
 from corelib.ml.transformers.transformer import FeatureTransformer
 
 
-class StandardTransformer(StandardScaler, FeatureTransformer):
+class DayLinearTransformer(FeatureTransformer):
     """Machine learning algorithm."""
 
     def fit_transformation(
@@ -22,13 +25,13 @@ class StandardTransformer(StandardScaler, FeatureTransformer):
         """Wraps the fit method.
 
         Args:
-            features: Union[pd.DataFrame, pd.Series]
+            features: pd.DataFrame
                 Input features to fit the transformation.
 
         Returns:
             None
         """
-        self.fit(X=features)
+        pass
 
     def apply_transformation(
         self, features: Union[pd.DataFrame, pd.Series]
@@ -40,10 +43,12 @@ class StandardTransformer(StandardScaler, FeatureTransformer):
                 Features to apply transformation
 
         Returns:
-            Union[pd.DataFrame, pd.Series]:
+            pd.DataFrame:
                 Transformed features.
         """
-        return self.transform(X=features)
+        return encode_day_of_week(
+            tx_datetime=features, encoder_function=TimeEncoderFunc.IDENTITY
+        )
 
     def fit_apply_transformation(
         self, features: Union[pd.DataFrame, pd.Series]
@@ -51,11 +56,13 @@ class StandardTransformer(StandardScaler, FeatureTransformer):
         """Fit and apply the transformation.
 
         Args:
-            features: Union[pd.DataFrame, pd.Series]
+            features: pd.DataFrame
                 Features to fit and apply transformation
 
         Returns:
-            Union[pd.DataFrame, pd.Series]:
+            pd.DataFrame:
                 Transformed features.
         """
-        return self.fit_transform(X=features)
+        return encode_day_of_week(
+            tx_datetime=features, encoder_function=TimeEncoderFunc.IDENTITY
+        )

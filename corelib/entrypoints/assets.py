@@ -19,7 +19,6 @@ from corelib.ml.estimators.estimator_factory import (
     EstimatorType,
 )
 from corelib.ml.evaluators.evaluator_factory import EvaluatorType
-from corelib.ml.transformers.transformers_factory import TransformerType
 
 
 class Assets:
@@ -45,7 +44,6 @@ class Assets:
             data_repository_type=DataRepositoryType.SYNTHETIC,
             evaluator_type=EvaluatorType.TIME_EVALUATOR,
             algorithm_type=AlgorithmType.LIGHT_GBM,
-            transformer_type=TransformerType.MIN_MAX_SCALER,
             do_hpo=False,
         )
 

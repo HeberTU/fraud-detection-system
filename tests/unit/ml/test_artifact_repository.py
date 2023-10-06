@@ -41,7 +41,7 @@ def test_artifacts_attributes(
     artifact_repo = ArtifactRepo(**ml_artifacts)
 
     assert hasattr(artifact_repo, "feature_schemas")
-    assert hasattr(artifact_repo, "feature_transformer")
+    assert hasattr(artifact_repo, "transformer_chain")
     assert hasattr(artifact_repo, "algorithm")
     assert hasattr(artifact_repo, "integration_test_set")
 
@@ -53,7 +53,6 @@ def test_artifacts_attributes(
         {
             "data_repository_type": DataRepositoryType.SYNTHETIC,
             "algorithm_type": AlgorithmType.LIGHT_GBM,
-            "transformer_type": TransformerType.IDENTITY,
         }
     ],
     indirect=True,
@@ -76,7 +75,6 @@ def test_dump_artifacts_call(
         {
             "data_repository_type": DataRepositoryType.SYNTHETIC,
             "algorithm_type": AlgorithmType.LIGHT_GBM,
-            "transformer_type": TransformerType.IDENTITY,
         }
     ],
     indirect=True,
