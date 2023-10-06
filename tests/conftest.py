@@ -9,6 +9,7 @@ from typing import (
     Any,
     Dict,
 )
+from unittest.mock import patch
 
 import httpx
 import pandas as pd
@@ -16,11 +17,14 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from pandera.typing import Series
 
+from corelib.data_schemas.data_schema_factory import DataSchemaFactory
 from corelib.entrypoints.api import app
+from corelib.ml.algorithms.algorithm_factory import AlgorithmFactory
 from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
     LightGBMParams,
 )
+from corelib.ml.transformers.transformers_factory import TransformerFactory
 from corelib.services.contracts import PredictionRequest
 
 
@@ -104,3 +108,33 @@ def prediction_request() -> PredictionRequest:
         terminal_id_mean_tx_fraud_7_days=0.03,
         terminal_id_mean_tx_fraud_30_days=0.02,
     )
+
+
+@pytest.fixture
+def ml_artifacts(request: FixtureRequest) -> Dict[str, Any]:
+    """Create ml artifacts."""
+    data_repository_type = request.param.get("data_repository_type")
+    algorithm_type = request.param.get("algorithm_type")
+    transformer_type = request.param.get("transformer_type")
+    data_schemas = DataSchemaFactory().create(
+        data_repository_type=data_repository_type
+    )
+    algorithm = AlgorithmFactory().create(algorithm_type=algorithm_type)
+    feature_transformer = TransformerFactory().create(
+        transformer_type=transformer_type
+    )
+    integration_test_set = pd.DataFrame()
+
+    return {
+        "feature_schemas": data_schemas,
+        "feature_transformer": feature_transformer,
+        "algorithm": algorithm,
+        "integration_test_set": integration_test_set,
+    }
+
+
+@pytest.fixture
+def mock_settings(tmp_path) -> None:
+    """Mock the ASSETS_PATH with tmp_path for testing purposes."""
+    with patch("corelib.config.settings.ASSETS_PATH", tmp_path):
+        yield

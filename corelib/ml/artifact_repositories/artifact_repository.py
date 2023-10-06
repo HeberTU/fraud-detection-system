@@ -64,5 +64,7 @@ class ArtifactRepo:
             algorithm=utils.load_artifacts(
                 file_path=files_path / "algorithm.pickle"
             ),
-            integration_test_set=pd.DataFrame(),
+            integration_test_set=utils.load_artifacts(
+                file_path=files_path / "integration_test_set.pickle"
+            ),
         )
