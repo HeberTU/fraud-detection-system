@@ -55,7 +55,24 @@ class TransformerChainFactory:
                     out_feature_name="tx_time_sin",
                     transformer=TimeSinTransformer(),
                 ),
-            ]
+            ],
+            DataRepositoryType.SYNTHETIC: [
+                TransformedFeature(
+                    in_feature_name="tx_datetime",
+                    out_feature_name="tx_day_linear",
+                    transformer=DayLinearTransformer(),
+                ),
+                TransformedFeature(
+                    in_feature_name="tx_datetime",
+                    out_feature_name="tx_time_cos",
+                    transformer=TimeCosTransformer(),
+                ),
+                TransformedFeature(
+                    in_feature_name="tx_datetime",
+                    out_feature_name="tx_time_sin",
+                    transformer=TimeSinTransformer(),
+                ),
+            ],
         }
 
     def create(
