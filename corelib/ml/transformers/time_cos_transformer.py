@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""DayLinearTransformer..
+"""Time cosine transformer.
 
 Created on: 6/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
@@ -11,12 +11,12 @@ import pandas as pd
 
 from corelib.domain.feature_transformations.time_enconding import (
     TimeEncoderFunc,
-    encode_day_of_week,
+    encode_day_time,
 )
 from corelib.ml.transformers.transformer import FeatureTransformer
 
 
-class DayLinearTransformer(FeatureTransformer):
+class TimeCosTransformer(FeatureTransformer):
     """Machine learning algorithm."""
 
     def fit_transformation(
@@ -46,8 +46,8 @@ class DayLinearTransformer(FeatureTransformer):
             pd.DataFrame:
                 Transformed features.
         """
-        return encode_day_of_week(
-            tx_datetime=features, encoder_function=TimeEncoderFunc.IDENTITY
+        return encode_day_time(
+            tx_datetime=features, encoder_function=TimeEncoderFunc.COS
         )
 
     def fit_apply_transformation(
@@ -63,6 +63,6 @@ class DayLinearTransformer(FeatureTransformer):
             pd.DataFrame:
                 Transformed features.
         """
-        return encode_day_of_week(
-            tx_datetime=features, encoder_function=TimeEncoderFunc.IDENTITY
+        return encode_day_time(
+            tx_datetime=features, encoder_function=TimeEncoderFunc.COS
         )
