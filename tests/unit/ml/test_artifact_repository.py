@@ -41,7 +41,7 @@ def test_artifacts_attributes(
     artifact_repo = ArtifactRepo(**ml_artifacts)
 
     assert hasattr(artifact_repo, "feature_schemas")
-    assert hasattr(artifact_repo, "feature_transformer")
+    assert hasattr(artifact_repo, "transformer_chain")
     assert hasattr(artifact_repo, "algorithm")
     assert hasattr(artifact_repo, "integration_test_set")
 
