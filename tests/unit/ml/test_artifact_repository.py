@@ -53,7 +53,6 @@ def test_artifacts_attributes(
         {
             "data_repository_type": DataRepositoryType.SYNTHETIC,
             "algorithm_type": AlgorithmType.LIGHT_GBM,
-            "transformer_type": TransformerType.IDENTITY,
         }
     ],
     indirect=True,
@@ -76,7 +75,6 @@ def test_dump_artifacts_call(
         {
             "data_repository_type": DataRepositoryType.SYNTHETIC,
             "algorithm_type": AlgorithmType.LIGHT_GBM,
-            "transformer_type": TransformerType.IDENTITY,
         }
     ],
     indirect=True,
