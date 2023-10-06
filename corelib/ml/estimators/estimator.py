@@ -31,7 +31,7 @@ from corelib.ml.evaluators.evaluator import Evaluator
 from corelib.ml.hyperparam_optim.search_dimension import (
     SKOptHyperparameterDimension,  # fmt: skip
 )
-from corelib.ml.transformers.transformer import FeatureTransformer
+from corelib.ml.transformers.transformer_chain import TransformerChain
 
 
 class Estimator(ABC):
@@ -46,7 +46,7 @@ class Estimator(ABC):
         timestamp_schema: Optional[data_schemas.BaseSchema],
         customer_id_schema: Optional[data_schemas.BaseSchema],
         algorithm: Algorithm,
-        feature_transformer: FeatureTransformer,
+        transformer_chain: TransformerChain,
         do_hpo: bool,
     ):
         """Instantiate a Base Algorithm.
@@ -66,7 +66,7 @@ class Estimator(ABC):
                 customer_id schema for model evaluation.
             algorithm: BaseEstimator
                 ML algorithm to tran and test.
-            feature_transformer: FeatureTransformer
+            transformer_chain: TransformerChain
                 Feature transformer.
             do_hpo: bool
                 If True, the estimator will do hyperparameter search.
@@ -80,7 +80,7 @@ class Estimator(ABC):
         self.customer_id_schema = customer_id_schema
 
         self.algorithm = algorithm
-        self.feature_transformer = feature_transformer
+        self.transformer_chain = transformer_chain
 
         self._version = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -161,7 +161,7 @@ class Estimator(ABC):
 
         artifact_repo = ArtifactRepo(
             feature_schemas=self.feature_schemas,
-            feature_transformer=self.feature_transformer,
+            transformer_chain=self.transformer_chain,
             algorithm=self.algorithm,
             integration_test_set=integration_test_set,
         )
