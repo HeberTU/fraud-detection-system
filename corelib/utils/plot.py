@@ -8,6 +8,7 @@ Licence,
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from numpy.typing import ArrayLike
 
 
 def partial_dependency_plot(
@@ -36,7 +37,6 @@ def partial_dependency_plot(
     # Creating a twin Axes sharing the xaxis
     ax2 = ax1.twinx()
 
-    # Bar plot (trx) plotted first
     # Bar plot (trx) plotted first
     bar = sns.barplot(
         x=agg_data[feature_name],
@@ -96,10 +96,51 @@ def scatter_plot(
     fig, ax = plt.subplots(figsize=(10, 4))
     sns.scatterplot(
         data=data.sample(n_samples, random_state=0),
-        # data=trx.sample(10000),
         x=feature_name,
         y="tx_fraud",
     )
     ax.set_title(f"Partial dependence on {feature_name}")
     ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.show()
+
+
+def plot_precision_recall_curve(
+    precision: ArrayLike,
+    recall: ArrayLike,
+    pr_auc: float,
+    pr_auc_random: float,
+) -> None:
+    """Plot the Precision-Recall Area Under the Curve.
+
+    Args:
+        precision: ArrayLike
+            Precision values.
+        recall: ArrayLike
+            Recall values.
+        pr_auc: float
+            Model's Precision-Recall Area Under the Curve
+        pr_auc_random: float
+            Random Precision-Recall Area Under the Curve
+
+    Returns:
+        None
+    """
+    pr_curve, ax = plt.subplots(figsize=(5, 5))
+    ax.step(recall, precision, label=f"AP-AUC Model = {round(pr_auc, 3)}")
+    ax.set_title("Precision-Recall Curve Test Data", fontsize=15)
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+    ax.set_xlim([-0.01, 1.01])
+    ax.set_ylim([-0.01, 1.01])
+
+    ax.set_xlabel("Recall: Detected Frauds / Total Frauds", fontsize=10)
+    ax.set_ylabel(
+        "Precision:  Detected Frauds / Predicted Frauds", fontsize=10
+    )
+    ax.plot(
+        [0, 1],
+        [pr_auc_random, pr_auc_random],
+        "r--",
+        label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
+    )
+    ax.legend(loc="upper right")
     plt.show()

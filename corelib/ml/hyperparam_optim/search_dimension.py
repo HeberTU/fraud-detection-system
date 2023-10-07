@@ -166,7 +166,7 @@ class RealDimension(SKOptHyperparameterDimension):
 class CategoricalDimension(SKOptHyperparameterDimension):
     """Categorical search dimension."""
 
-    def __init__(self, categories: List[str], name: str):
+    def __init__(self, categories: List[Union[str, float, int]], name: str):
         """Instantiate a categorical search dimension.
 
         Args:

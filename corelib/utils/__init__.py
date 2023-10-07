@@ -13,7 +13,10 @@ from corelib.utils.io import (
     dump_artifacts,
     load_artifacts,
 )
-from corelib.utils.logging import get_logger
+from corelib.utils.logging import (
+    get_logger,
+    log_model_results,
+)
 from corelib.utils.time import timer
 
 __all__ = [
@@ -23,4 +26,5 @@ __all__ = [
     "make_obj_hash",
     "dump_artifacts",
     "load_artifacts",
+    "log_model_results",
 ]

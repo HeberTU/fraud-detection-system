@@ -56,7 +56,6 @@ class Evaluator(ABC):
         raise NotImplementedError
 
     @staticmethod
-    @utils.timer
     def hash_data(data: pd.DataFrame) -> str:
         """Hash data for tracking purposes.
 
@@ -71,7 +70,10 @@ class Evaluator(ABC):
         return hashed_object
 
     def evaluate(
-        self, results: metrics.Results, true_values: metrics.TrueValues
+        self,
+        results: metrics.Results,
+        true_values: metrics.TrueValues,
+        plot_results: bool = False,
     ) -> Dict[str, float]:
         """Evaluate model predictions.
 
@@ -80,6 +82,8 @@ class Evaluator(ABC):
                 Estimator results.
             true_values: metrics.TrueValues
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             Dict[str, float]:
@@ -88,7 +92,9 @@ class Evaluator(ABC):
         scores = {}
         for metric_instance in self.metrics:
             score = metric_instance.measure(
-                results=results, true_values=true_values
+                results=results,
+                true_values=true_values,
+                plot_results=plot_results,
             )
             scores[metric_instance.name] = score
 
@@ -100,6 +106,7 @@ class Evaluator(ABC):
         hashed_data: str,
         results: metrics.Results,
         true_values: metrics.TrueValues,
+        plot_results: bool = False,
     ) -> Dict[str, Any]:
         """Log model evaluation.
 
@@ -112,17 +119,22 @@ class Evaluator(ABC):
                 Estimator results.
             true_values:metrics.TrueValues
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             Dict[str, Any]:
                 Model results.
 
         """
-        scores = self.evaluate(results=results, true_values=true_values)
+        scores = self.evaluate(
+            results=results, true_values=true_values, plot_results=plot_results
+        )
         results = {
             "scores": scores,
             "estimator_params": estimator_params,
             "hashed_data": hashed_data,
         }
-        logger.info(results)
+        if plot_results:
+            utils.log_model_results(logger=logger, results=results)
         return results

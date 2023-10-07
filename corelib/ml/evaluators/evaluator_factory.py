@@ -30,6 +30,8 @@ class EvaluatorFactory:
         self._catalogue = {EvaluatorType.TIME_EVALUATOR: TimeEvaluator}
         self.metric_type_list = [
             metrics.MetricType.AVERAGE_PRECISION,
+            metrics.MetricType.PR_AUC,
+            metrics.MetricType.RANDOM_PR_AUC,
             metrics.MetricType.CARD_PRECISION_TOP_K,
             metrics.MetricType.PERFECT_CARD_PRECISION_TOP_K,
         ]

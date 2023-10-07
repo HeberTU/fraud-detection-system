@@ -131,7 +131,12 @@ class Estimator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def evaluate(self, data: pd.DataFrame, hashed_data: str) -> Dict[str, Any]:
+    def evaluate(
+        self,
+        data: pd.DataFrame,
+        hashed_data: str,
+        plot_results: bool = False,
+    ) -> Dict[str, Any]:
         """Evaluate ml model.
 
         Args:
@@ -139,6 +144,9 @@ class Estimator(ABC):
                 Data that will be used to evaluate model, usually is the
                 testing data.
             hashed_data: str
+                Hash representation of the data.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             Dict[str, float]

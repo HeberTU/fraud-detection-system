@@ -52,13 +52,13 @@ class MLEstimator(Estimator):
         test_results = self.evaluate(
             data=test_data,
             hashed_data=hashed_data,
+            plot_results=True,
         )
 
         self.set_model_artifacts(integration_test_set=test_data.sample(n=1000))
 
         return test_results
 
-    @utils.timer
     def fit(
         self, data: pd.DataFrame, hyper_parameters: Dict[str, Any]
     ) -> None:
@@ -104,8 +104,12 @@ class MLEstimator(Estimator):
             scores=self.algorithm.get_scores(features=features),
         )
 
-    @utils.timer
-    def evaluate(self, data: pd.DataFrame, hashed_data: str) -> Dict[str, Any]:
+    def evaluate(
+        self,
+        data: pd.DataFrame,
+        hashed_data: str,
+        plot_results: bool = False,
+    ) -> Dict[str, Any]:
         """Evaluate ml model.
 
         Args:
@@ -113,6 +117,9 @@ class MLEstimator(Estimator):
                 Data that will be used to evaluate model, usually is the
                 testing data.
             hashed_data: str
+                Hash representation of the data.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             Dict[str, float]
@@ -136,9 +143,11 @@ class MLEstimator(Estimator):
                 tx_datetime=tx_datetime,
                 customer_id=customer_id,
             ),
+            plot_results=plot_results,
         )
         return results
 
+    @utils.timer
     def optimize_and_fit(
         self,
         data: pd.DataFrame,
@@ -228,6 +237,7 @@ class MLEstimator(Estimator):
         validation_results = self.evaluate(
             data=validation_data,
             hashed_data="HPO",
+            plot_results=False,
         )
 
         return validation_results.get("scores").get("average_precision_score")
