@@ -165,5 +165,5 @@ def test_time_since_previous_transaction(
     )
     assert "time_since_last_tx" in result.columns
 
-    assert result.time_since_last_tx.mean() == pytest.approx(3240, 0.001)
-    assert result.time_since_last_tx.sum() == pytest.approx(32400, 0.001)
+    assert result.time_since_last_tx.mean() == pytest.approx(60, 0.001)
+    assert result.time_since_last_tx.sum() == pytest.approx(600, 0.001)

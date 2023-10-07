@@ -235,9 +235,11 @@ def time_since_previous_transaction(
 
     data["time_since_last_tx"] = (
         data[datetime_col] - data["last_datetime"]
-    ).dt.seconds
+    ).dt.seconds / 60
 
-    data["time_since_last_tx"] = data["time_since_last_tx"].fillna(0)
+    fill_value = data["time_since_last_tx"].max()
+
+    data["time_since_last_tx"] = data["time_since_last_tx"].fillna(fill_value)
 
     data = data.drop(columns=["last_datetime"])
 

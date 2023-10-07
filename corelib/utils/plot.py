@@ -6,6 +6,7 @@ Created on: 6/10/23
 Licence,
 """
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from numpy.typing import ArrayLike
@@ -125,9 +126,9 @@ def plot_precision_recall_curve(
     Returns:
         None
     """
-    pr_curve, ax = plt.subplots(figsize=(5, 5))
+    pr_curve, ax = plt.subplots(figsize=(8, 5))
     ax.step(recall, precision, label=f"AP-AUC Model = {round(pr_auc, 3)}")
-    ax.set_title("Precision-Recall Curve Test Data", fontsize=15)
+    ax.set_title("Precision-Recall Curve Test Data", fontsize=12)
     ax.grid(True, which="both", linestyle="--", linewidth=0.5)
     ax.set_xlim([-0.01, 1.01])
     ax.set_ylim([-0.01, 1.01])
@@ -143,4 +144,161 @@ def plot_precision_recall_curve(
         label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
     )
     ax.legend(loc="upper right")
+    plt.show()
+
+
+def plot_precision_recall_with_thresholds(
+    precision: ArrayLike,
+    recall: ArrayLike,
+    thresholds: ArrayLike,
+    target_precision: float = 0.8,
+) -> None:
+    """Plot Precision vs Recall for different thresholds.
+
+    Args:
+        precision: ArrayLike
+            Precision values.
+        recall: ArrayLike
+            Recall values.
+        thresholds: ArrayLike
+            Threshold values corresponding to precision and recall values.
+        target_precision: float = 0.8
+            Target precision.
+
+    Returns:
+        None
+    """
+    # Set up the figure and axis
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    # Plot Precision and Recall curves
+    ax.plot(thresholds, precision[:-1], "b--", label="Precision")
+    ax.plot(thresholds, recall[:-1], "r--", label="Recall")
+
+    # Find threshold closest to 80% precision
+    close_80_precision = np.argmin(np.abs(precision - target_precision))
+    threshold_80_precision = thresholds[close_80_precision]
+
+    # Add vertical line to the plot at the threshold where precision is closest
+    # to 80%
+    ax.axvline(x=threshold_80_precision, color="g", linestyle="--")
+
+    _text = (
+        f"Threshold for {target_precision*100}%"
+        f" Precision: {threshold_80_precision:.2f}"
+    )
+    # Add text near the vertical line with smaller font size
+    ax.text(
+        threshold_80_precision + 0.01,
+        0.5,
+        _text,
+        rotation=0,
+        verticalalignment="center",
+        fontsize=8,
+    )
+
+    # Configure axis and plot properties
+    ax.set_title("Precision vs Recall for different thresholds", fontsize=12)
+    ax.set_xlabel("Threshold", fontsize=10)
+    ax.set_ylabel("Value", fontsize=10)
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+    ax.set_xlim([min(thresholds), max(thresholds)])
+    ax.set_ylim([0, 1])
+
+    # Place the legend inside the plot in the best location
+    ax.legend(loc="best")
+
+    # Show the plot
+    plt.show()
+
+
+def plot_combined_precision_recall(
+    precision: ArrayLike,
+    recall: ArrayLike,
+    thresholds: ArrayLike,
+    pr_auc: float,
+    pr_auc_random: float,
+    target_precision: float = 0.8,
+) -> None:
+    """Plot Precision-Recall and Precision vs Recall for different thresholds.
+
+    Args:
+        precision: ArrayLike
+            Precision values.
+        recall: ArrayLike
+            Recall values.
+        thresholds: ArrayLike
+            Threshold values corresponding to precision and recall values.
+        pr_auc: float
+            Model's Precision-Recall Area Under the Curve.
+        pr_auc_random: float
+            Random Precision-Recall Area Under the Curve.
+        target_precision: float
+            Target precision.
+
+    Returns:
+        None
+    """
+    # Set up the figure and axes
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6))
+
+    # Plot Precision-Recall curve on the first axis
+    ax1.step(
+        recall,
+        precision,
+        color="#ffd966ff",
+        label=f"AP-AUC Model = {round(pr_auc, 3)}",
+    )
+    ax1.set_title("Precision-Recall Curve Test Data", fontsize=12)
+    ax1.grid(True, which="both", linestyle="--", linewidth=0.5)
+    ax1.set_xlim([-0.01, 1.01])
+    ax1.set_ylim([-0.01, 1.01])
+    ax1.set_xlabel("Recall: Detected Frauds / Total Frauds", fontsize=10)
+    ax1.set_ylabel(
+        "Precision: Detected Frauds / Predicted Frauds", fontsize=10
+    )
+    ax1.plot(
+        [0, 1],
+        [pr_auc_random, pr_auc_random],
+        color="#93c47dff",
+        linestyle="--",
+        label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
+    )
+    ax1.legend(loc="best")
+
+    # Plot Precision and Recall curves on the second axis
+    ax2.plot(thresholds, precision[:-1], "b--", label="Precision")
+    ax2.plot(thresholds, recall[:-1], "r--", label="Recall")
+
+    # Find threshold closest to target precision
+    close_target_precision = np.argmin(np.abs(precision - target_precision))
+    threshold_target_precision = thresholds[close_target_precision]
+
+    # Add vertical line to the plot at the threshold where precision is closest
+    # to target precision
+    ax2.axvline(x=threshold_target_precision, color="black", linestyle="--")
+    _text = (
+        f"Threshold for {target_precision*100}%"
+        f" Precision: {threshold_target_precision:.2f}"
+    )
+    ax2.text(
+        threshold_target_precision + 0.01,
+        0.5,
+        _text,
+        rotation=0,
+        verticalalignment="center",
+        fontsize=8,
+    )
+
+    # Configure axis properties
+    ax2.set_title("Precision vs Recall for different thresholds", fontsize=12)
+    ax2.set_xlabel("Threshold", fontsize=10)
+    ax2.set_ylabel("Value", fontsize=10)
+    ax2.grid(True, which="both", linestyle="--", linewidth=0.5)
+    ax2.set_xlim([min(thresholds), max(thresholds)])
+    ax2.set_ylim([0, 1])
+    ax2.legend(loc="best")
+
+    # Display the plots
+    plt.tight_layout()
     plt.show()

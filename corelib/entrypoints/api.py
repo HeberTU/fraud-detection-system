@@ -24,24 +24,33 @@ estimator = Assets(settings.ENV)()
 app = FastAPI()
 
 
-@app.post("/predict", response_model=PredictionResponse)
+@app.post(
+    "/model/v0/prediction/{transaction_id}", response_model=PredictionResponse
+)
 def predict(
+    transaction_id: str,
     request: PredictionRequest,
     estimator: Estimator = Depends(lambda: estimator),
 ) -> PredictionResponse:
     """Prediction endpoint.
 
     Args:
-        request: PredictionRequest
+        transaction_id: str
+            Unique ID for the transaction.
+        request: ModifiedPredictionRequest
             Input features.
         estimator: Estimator
             Estimator class.
 
     Returns:
-        PredictionResponse:
-            Fraud prediction.
+        ModifiedPredictionResponse:
+            Decision to block the transaction or not.
     """
     service = PredictionService(estimator)
-    prediction = service.make_prediction(request)
+    prediction = service.make_prediction(
+        prediction_request=request, transaction_id=int(transaction_id)
+    )
 
-    return PredictionResponse(prediction=prediction)
+    return PredictionResponse(
+        transaction_id=transaction_id, transaction_to_block=prediction
+    )

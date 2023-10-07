@@ -79,6 +79,19 @@ class Local(DataRepository):
             feature_name="tx_amount",
             agg_func_list=[
                 feature_transformations.AggFunc.MEAN,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="customer_id",
+            delay_period=0,
+        )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 5, 10],
+            time_unit=feature_transformations.TimeUnits.MINUTES,
+            feature_name="tx_amount",
+            agg_func_list=[
                 feature_transformations.AggFunc.COUNT,
             ],
             datetime_col="tx_datetime",
@@ -89,8 +102,8 @@ class Local(DataRepository):
 
         data = feature_transformations.aggregate_feature(
             transactions_df=data,
-            windows_size_in_days=[1, 7],
-            time_unit=feature_transformations.TimeUnits.DAYS,
+            windows_size_in_days=[1, 5],
+            time_unit=feature_transformations.TimeUnits.MINUTES,
             feature_name="time_since_last_tx",
             agg_func_list=[
                 feature_transformations.AggFunc.MEAN,

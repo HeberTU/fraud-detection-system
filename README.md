@@ -114,14 +114,21 @@ With the provided `docker-compose.yml` file, you can easily orchestrate the setu
     docker-compose up training
     ```
 
-3. **Serve the Model in Development Mode**:
+3. **Test Model Prediction Consistency**:
+
+    Before moving to the serving stage, testing the model's prediction consistency between training and inference pipelines is crucial; it is worthwhile noting that latency tests are on the backlog. To do so, it is possible to use the deployment service independently:
+    ```zsh
+    docker-compose up serve_dev
+    ```
+
+4. **Serve the Model in Development Mode**:
 
     To serve the model using FastAPI after training:
     ```zsh
     docker-compose up serve_dev
     ```
 
-    Once up, you can access the API at `http://localhost:8000/`.
+    Once up, you can access the API at `http://localhost:8000/docs`.
 
 4. **Stopping and Removing Containers**:
 

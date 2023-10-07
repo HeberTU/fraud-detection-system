@@ -104,62 +104,62 @@ class LightGBMHPOParams:
         categories=["xentropy"], name="objective"
     )
     num_iterations: hpo.IntegerDimension = hpo.IntegerDimension(
-        interval_start=50,
-        interval_end=1000,
+        interval_start=100,
+        interval_end=300,
         prior=hpo.Prior.UNIFORM,
         name="num_iterations",
     )
     max_depth: hpo.IntegerDimension = hpo.IntegerDimension(
         interval_start=3,
-        interval_end=10,
+        interval_end=5,
         prior=hpo.Prior.UNIFORM,
         name="max_depth",
     )
     num_leaves: hpo.IntegerDimension = hpo.IntegerDimension(
-        interval_start=10,
-        interval_end=500,
+        interval_start=30,
+        interval_end=40,
         prior=hpo.Prior.UNIFORM,
         name="num_leaves",
     )
     learning_rate: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.001,
-        interval_end=0.3,
+        interval_start=0.05,
+        interval_end=0.1,
         prior=hpo.Prior.LOG_UNIFORM,
         name="learning_rate",
     )
     bagging_fraction: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
-        interval_end=0.99,
+        interval_start=0.7,
+        interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="bagging_fraction",
     )
     feature_fraction: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
-        interval_end=0.99,
+        interval_start=0.7,
+        interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="feature_fraction",
     )
     min_gain_to_split: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
-        interval_end=10,
+        interval_start=0.7,
+        interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="min_gain_to_split",
     )
     min_data_in_leaf: hpo.IntegerDimension = hpo.IntegerDimension(
-        interval_start=10,
-        interval_end=200,
+        interval_start=1,
+        interval_end=20,
         prior=hpo.Prior.UNIFORM,
         name="min_data_in_leaf",
     )
     lambda_l1: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.1,
-        interval_end=50,
+        interval_start=0.0,
+        interval_end=0.99,
         prior=hpo.Prior.UNIFORM,
         name="lambda_l1",
     )
     lambda_l2: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.1,
-        interval_end=50,
+        interval_start=0.5,
+        interval_end=0.99,
         prior=hpo.Prior.UNIFORM,
         name="lambda_l2",
     )
