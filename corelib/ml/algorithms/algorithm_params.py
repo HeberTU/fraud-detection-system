@@ -105,7 +105,7 @@ class LightGBMHPOParams:
     )
     num_iterations: hpo.IntegerDimension = hpo.IntegerDimension(
         interval_start=100,
-        interval_end=500,
+        interval_end=300,
         prior=hpo.Prior.UNIFORM,
         name="num_iterations",
     )
@@ -128,19 +128,19 @@ class LightGBMHPOParams:
         name="learning_rate",
     )
     bagging_fraction: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
+        interval_start=0.7,
         interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="bagging_fraction",
     )
     feature_fraction: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
+        interval_start=0.7,
         interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="feature_fraction",
     )
     min_gain_to_split: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.5,
+        interval_start=0.7,
         interval_end=1,
         prior=hpo.Prior.UNIFORM,
         name="min_gain_to_split",
@@ -158,7 +158,7 @@ class LightGBMHPOParams:
         name="lambda_l1",
     )
     lambda_l2: hpo.RealDimension = hpo.RealDimension(
-        interval_start=0.0,
+        interval_start=0.5,
         interval_end=0.99,
         prior=hpo.Prior.UNIFORM,
         name="lambda_l2",
