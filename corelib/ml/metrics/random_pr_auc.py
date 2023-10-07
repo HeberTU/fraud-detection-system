@@ -24,7 +24,12 @@ class RandomPRAUCScore(Metric):
     name: str = "random_pr_auc_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: TrueValues) -> float:
+    def measure(
+        self,
+        results: Results,
+        true_values: TrueValues,
+        plot_results: bool = False,
+    ) -> float:
         """Compute PR-AUC for a random classifier.
 
         Args:
@@ -32,6 +37,8 @@ class RandomPRAUCScore(Metric):
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             float:

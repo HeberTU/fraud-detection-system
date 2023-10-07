@@ -29,7 +29,12 @@ class PRAUCScore(Metric):
     name: str = "pr_auc_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: TrueValues) -> float:
+    def measure(
+        self,
+        results: Results,
+        true_values: TrueValues,
+        plot_results: bool = False,
+    ) -> float:
         """Compute Area Under the Precision-Recall Curve.
 
         Args:
@@ -37,6 +42,8 @@ class PRAUCScore(Metric):
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             float:

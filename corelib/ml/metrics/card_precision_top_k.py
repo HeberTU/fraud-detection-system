@@ -27,7 +27,12 @@ class CardPrecisionTopK(Metric):
     name: str = "Card_precision_top_k"
     params: Optional[Dict[str, Any]] = {"top_k": 100}
 
-    def measure(self, results: Results, true_values: TrueValues) -> float:
+    def measure(
+        self,
+        results: Results,
+        true_values: TrueValues,
+        plot_results: bool = False,
+    ) -> float:
         """Compute the card  precision top-k.
 
         Args:
@@ -35,6 +40,8 @@ class CardPrecisionTopK(Metric):
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             float:

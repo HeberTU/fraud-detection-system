@@ -51,7 +51,12 @@ class AveragePrecisionScore(Metric):
     name: str = "average_precision_score"
     params: Optional[Dict[str, Any]] = None
 
-    def measure(self, results: Results, true_values: TrueValues) -> float:
+    def measure(
+        self,
+        results: Results,
+        true_values: TrueValues,
+        plot_results: bool = False,
+    ) -> float:
         """Compute Area Under the Receiver Operating Characteristic Curve.
 
         Args:
@@ -59,6 +64,8 @@ class AveragePrecisionScore(Metric):
                 Estimator predictions.
             true_values: NDArray
                 True values that we want to predict.
+            plot_results: bool
+                If True, model results will be plotted.
 
         Returns:
             float:
