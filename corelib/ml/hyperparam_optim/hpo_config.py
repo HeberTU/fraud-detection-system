@@ -12,6 +12,6 @@ from dataclasses import dataclass
 class HPOConfig:
     """HPO Configuration."""
 
-    n_calls: int = 100
-    n_random_starts: int = 10
+    n_calls: int = 25
+    n_random_starts: int = 3
     random_state: int = 19911127
