@@ -5,7 +5,6 @@ Created on: 4/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from datetime import datetime
 
 from pydantic import (
     BaseModel,
@@ -16,7 +15,7 @@ from pydantic import (
 class PredictionRequest(BaseModel):
     """Prediction request contract."""
 
-    tx_datetime: datetime = Field(..., description="Transaction datetime")
+    tx_datetime: int = Field(..., description="Unix timestamp in milliseconds")
     tx_amount: float = Field(..., description="Transaction amount")
     customer_id_mean_tx_amount_1_days: float = Field(
         ...,

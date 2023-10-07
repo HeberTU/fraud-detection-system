@@ -5,6 +5,7 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from datetime import datetime
 from typing import (
     Any,
     Dict,
@@ -95,18 +96,25 @@ def client() -> httpx.AsyncClient:
 def prediction_request() -> PredictionRequest:
     """Get prediction request instance."""
     return PredictionRequest(
+        tx_datetime=int(
+            datetime.now().timestamp() * 1000
+        ),  # current time as Unix timestamp in milliseconds
         tx_amount=150.75,
-        is_weekday=1,
-        is_night=0,
         customer_id_mean_tx_amount_1_days=125.50,
         customer_id_count_tx_amount_1_days=3,
         customer_id_mean_tx_amount_7_days=110.25,
         customer_id_count_tx_amount_7_days=20,
         customer_id_mean_tx_amount_30_days=105.30,
         customer_id_count_tx_amount_30_days=85,
-        terminal_id_mean_tx_fraud_1_days=0.05,
-        terminal_id_mean_tx_fraud_7_days=0.03,
-        terminal_id_mean_tx_fraud_30_days=0.02,
+        sector_id_mean_tx_fraud_1_days=0.05,
+        sector_id_mean_tx_fraud_7_days=0.03,
+        sector_id_mean_tx_fraud_30_days=0.02,
+        customer_id_mean_tx_fraud_1_days=0.04,
+        customer_id_mean_tx_fraud_7_days=0.02,
+        customer_id_mean_tx_fraud_30_days=0.01,
+        time_since_last_tx=3600,  # e.g., 1 hour in seconds
+        customer_id_mean_time_since_last_tx_1_days=7200,  # e.g., 2 hours
+        customer_id_mean_time_since_last_tx_7_days=10800,  # e.g., 3 hours
     )
 
 

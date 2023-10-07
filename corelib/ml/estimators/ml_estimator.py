@@ -134,18 +134,33 @@ class MLEstimator(Estimator):
         customer_id = data_schemas.validate_and_coerce_schema(
             data=data, schema_class=self.customer_id_schema
         )
-        results = self.evaluator.log_testing(
+        true_values = metrics.TrueValues(
+            tx_fraud=true_values,
+            tx_datetime=tx_datetime,
+            customer_id=customer_id,
+        )
+        test_results = self.evaluator.log_testing(
             estimator_params=self.algorithm.get_fit_param(),
             hashed_data=hashed_data,
             results=results,
-            true_values=metrics.TrueValues(
-                tx_fraud=true_values,
-                tx_datetime=tx_datetime,
-                customer_id=customer_id,
-            ),
+            true_values=true_values,
             plot_results=plot_results,
         )
-        return results
+
+        if plot_results:
+            test_data = pd.concat(
+                objs=[
+                    true_values.tx_datetime,
+                    true_values.customer_id,
+                    true_values.tx_fraud,
+                ],
+                axis=1,
+            )
+
+            test_data["scores"] = results.scores
+            test_results["test_data"] = test_data
+
+        return test_results
 
     @utils.timer
     def optimize_and_fit(

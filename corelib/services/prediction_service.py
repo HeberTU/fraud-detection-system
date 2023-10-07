@@ -31,5 +31,6 @@ class PredictionService:
                 prediction.
         """
         data = pd.DataFrame(jsonable_encoder(prediction_request), index=[0])
+        data.tx_datetime = pd.Timestamp(data.tx_datetime, unit="ms")
         results = self.estimator.predict(data=data)
         return results.scores
