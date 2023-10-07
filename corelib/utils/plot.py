@@ -126,7 +126,7 @@ def plot_precision_recall_curve(
     Returns:
         None
     """
-    pr_curve, ax = plt.subplots(figsize=(5, 5))
+    pr_curve, ax = plt.subplots(figsize=(8, 5))
     ax.step(recall, precision, label=f"AP-AUC Model = {round(pr_auc, 3)}")
     ax.set_title("Precision-Recall Curve Test Data", fontsize=12)
     ax.grid(True, which="both", linestyle="--", linewidth=0.5)
@@ -169,7 +169,7 @@ def plot_precision_recall_with_thresholds(
         None
     """
     # Set up the figure and axis
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
 
     # Plot Precision and Recall curves
     ax.plot(thresholds, precision[:-1], "b--", label="Precision")
