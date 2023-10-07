@@ -47,4 +47,4 @@ class RandomPRAUCScore(Metric):
         if not self.params:
             self.params = {}
 
-        return true_values.tx_fraud.mean()
+        return true_values.tx_fraud.mean().values[0]

@@ -136,5 +136,6 @@ class Evaluator(ABC):
             "estimator_params": estimator_params,
             "hashed_data": hashed_data,
         }
-        logger.info(results)
+        if plot_results:
+            utils.log_model_results(logger=logger, results=results)
         return results
