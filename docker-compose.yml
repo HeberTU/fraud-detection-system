@@ -7,6 +7,14 @@ services:
     volumes:
       - ./assets:/fraud-detection-system/assets
       - ./.cachedir:/fraud-detection-system/.cachedir
+  deployment:
+    image: fraud-detection-system:latest
+    container_name: my_fraud_detection_test_container
+    command: test_deployment
+    depends_on:
+      - training
+    volumes:
+      - ./assets:/fraud-detection-system/assets
   serve_dev:
     image: fraud-detection-system:latest
     container_name: my_fraud_detection_serve_container
@@ -14,6 +22,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - training
+      - deployment
     volumes:
       - ./assets:/fraud-detection-system/assets

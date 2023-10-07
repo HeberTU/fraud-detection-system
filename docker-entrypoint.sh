@@ -9,6 +9,9 @@ case "$cmd" in
     "train_hpo")
         python train.py --do-hpo
         ;;
+    "test_deployment")
+         pytest -vv -m deployment
+        ;;
     "serve_dev")
         uvicorn corelib.entrypoints.api:app --host 0.0.0.0 --port 8000 --reload
         ;;
