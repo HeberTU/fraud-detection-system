@@ -17,6 +17,7 @@ class TimeUnits(str, enum.Enum):
     """Available time unites to aggregate."""
 
     DAYS = "days"
+    MINUTES = "minutes"
 
 
 class AggFunc(str, enum.Enum):
@@ -172,5 +173,72 @@ def aggregate_feature_by_time_window(
             ] = list(aggregated_feature)
 
     data = data.reset_index().set_index(keys=index_name)
+
+    return data
+
+
+@utils.cacher
+def get_time_since_previous_transaction(
+    transactions_df: pd.DataFrame,
+    datetime_col: str,
+    grouping_column: str,
+) -> pd.DataFrame:
+    """Get time since last transaction per customer.
+
+    Args:
+        transactions_df: pd.DataFrame
+            Transactions data frame.
+        feature_name: str
+            Name of the feature that will be transformed.
+        datetime_col: str
+            Name of the timestamp column.
+        grouping_column: str
+            Outer grouping variable
+
+    Returns:
+        pd.DataFrame
+            Data frame with last transaction per customer.
+    """
+    transactions_df = transactions_df.groupby(by=grouping_column).apply(
+        lambda x: time_since_previous_transaction(
+            data=x,
+            datetime_col=datetime_col,
+        )
+    )
+
+    transactions_df = transactions_df.reset_index(drop=True)
+
+    transactions_df["transaction_id"] = range(len(transactions_df))
+
+    return transactions_df.set_index("transaction_id")
+
+
+def time_since_previous_transaction(
+    data: pd.DataFrame,
+    datetime_col: str,
+) -> pd.DataFrame:
+    """Get time since last transaction.
+
+        data: pd.DataFrame
+            Data frame to be aggregated
+        feature_name: str
+            Name of the feature that will be transformed.
+        datetime_col: str
+            Name of the timestamp column.
+
+    Returns:
+        pd.DataFrame:
+            Data with time since last transaction.
+    """
+    data = data.sort_values(datetime_col)
+    data["last_datetime"] = data[datetime_col].shift(periods=1)
+
+    data["time_since_last_tx"] = (
+        data[datetime_col] - data["last_datetime"]
+    ).dt.seconds
+
+    data["time_since_last_tx"] = data["time_since_last_tx"].fillna(0)
+
+    data = data.drop(columns=["last_datetime"])
 
     return data

@@ -66,6 +66,12 @@ class Local(DataRepository):
         Returns:
             pd.DataFrame: Credit card transactional data.
         """
+        data = feature_transformations.get_time_since_previous_transaction(
+            transactions_df=data,
+            datetime_col="tx_datetime",
+            grouping_column="customer_id",
+        )
+
         data = feature_transformations.aggregate_feature(
             transactions_df=data,
             windows_size_in_days=[1, 7, 30],
@@ -74,6 +80,20 @@ class Local(DataRepository):
             agg_func_list=[
                 feature_transformations.AggFunc.MEAN,
                 feature_transformations.AggFunc.COUNT,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="customer_id",
+            delay_period=0,
+        )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 7],
+            time_unit=feature_transformations.TimeUnits.DAYS,
+            feature_name="time_since_last_tx",
+            agg_func_list=[
+                feature_transformations.AggFunc.MEAN,
             ],
             datetime_col="tx_datetime",
             index_name="transaction_id",
@@ -93,7 +113,22 @@ class Local(DataRepository):
             datetime_col="tx_datetime",
             index_name="transaction_id",
             grouping_column="sector_id",
-            delay_period=0,
+            delay_period=7,
+        )
+
+        data = feature_transformations.aggregate_feature(
+            transactions_df=data,
+            windows_size_in_days=[1, 7, 30],
+            time_unit=feature_transformations.TimeUnits.DAYS,
+            feature_name="tx_fraud",
+            agg_func_list=[
+                feature_transformations.AggFunc.SUM,
+                feature_transformations.AggFunc.COUNT,
+            ],
+            datetime_col="tx_datetime",
+            index_name="transaction_id",
+            grouping_column="customer_id",
+            delay_period=7,
         )
 
         data = data.assign(
@@ -115,6 +150,24 @@ class Local(DataRepository):
                     / x.sector_id_count_tx_fraud_30_days
                 )
             ),
+            customer_id_mean_tx_fraud_1_days=(
+                lambda x: (
+                    x.customer_id_sum_tx_fraud_1_days
+                    / x.customer_id_count_tx_fraud_1_days
+                )
+            ),
+            customer_id_mean_tx_fraud_7_days=(
+                lambda x: (
+                    x.customer_id_sum_tx_fraud_7_days
+                    / x.customer_id_count_tx_fraud_7_days
+                )
+            ),
+            customer_id_mean_tx_fraud_30_days=(
+                lambda x: (
+                    x.customer_id_sum_tx_fraud_30_days
+                    / x.customer_id_count_tx_fraud_30_days
+                )
+            ),
         )
 
         data = data.fillna(
@@ -122,6 +175,9 @@ class Local(DataRepository):
                 "sector_id_mean_tx_fraud_1_days": 0,
                 "sector_id_mean_tx_fraud_7_days": 0,
                 "sector_id_mean_tx_fraud_30_days": 0,
+                "customer_id_mean_tx_fraud_1_days": 0,
+                "customer_id_mean_tx_fraud_7_days": 0,
+                "customer_id_mean_tx_fraud_30_days": 0,
             }
         )
 
