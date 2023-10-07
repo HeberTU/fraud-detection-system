@@ -62,12 +62,15 @@ class PRAUCScore(Metric):
         score = auc(x=recall, y=precision)
 
         if plot_results:
-            plot_combined_precision_recall(
-                precision=precision,
-                recall=recall,
-                thresholds=thresholds,
-                pr_auc=score,
-                pr_auc_random=true_values.tx_fraud.mean().values[0],
-            )
+            try:
+                plot_combined_precision_recall(
+                    precision=precision,
+                    recall=recall,
+                    thresholds=thresholds,
+                    pr_auc=score,
+                    pr_auc_random=true_values.tx_fraud.mean().values[0],
+                )
+            except IndexError:
+                pass
 
         return score
