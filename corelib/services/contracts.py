@@ -21,23 +21,25 @@ class PredictionRequest(BaseModel):
         ...,
         description="Mean transaction amount for customer in the last 1 day",
     )
-    customer_id_count_tx_amount_1_days: float = Field(
-        ...,
-        description="Count of transactions for customer in the last 1 day",
-    )
     customer_id_mean_tx_amount_7_days: float = Field(
         ...,
         description="Mean transaction amount for customer in the last 7 days",
-    )
-    customer_id_count_tx_amount_7_days: float = Field(
-        ...,
-        description="Count of transactions for customer in the last 7 days",
     )
     customer_id_mean_tx_amount_30_days: float = Field(
         ...,
         description="Mean transaction amount for customer in the last 30 days",
     )
-    customer_id_count_tx_amount_30_days: float = Field(
+
+    customer_id_count_tx_amount_1_minutes: float = Field(
+        ...,
+        description="Count of transactions for customer in the last 1 day",
+    )
+    customer_id_count_tx_amount_5_minutes: float = Field(
+        ...,
+        description="Count of transactions for customer in the last 7 days",
+    )
+
+    customer_id_count_tx_amount_10_minutes: float = Field(
         ...,
         description="Count of transactions for customer in the last 30 days",
     )
@@ -65,14 +67,14 @@ class PredictionRequest(BaseModel):
         ...,
         description="Risk score for customer in the last 30 day",
     )
-    time_since_last_tx: int = Field(
+    time_since_last_tx: float = Field(
         ..., description="Time since the last transaction"
     )
-    customer_id_mean_time_since_last_tx_1_days: float = Field(
+    customer_id_mean_time_since_last_tx_1_minutes: float = Field(
         ...,
         description="Mean time since the last transaction last 1 day",
     )
-    customer_id_mean_time_since_last_tx_7_days: float = Field(
+    customer_id_mean_time_since_last_tx_5_minutes: float = Field(
         ...,
         description="Mean time since the last transaction last 7 day",
     )

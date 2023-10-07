@@ -47,7 +47,9 @@ def predict(
             Decision to block the transaction or not.
     """
     service = PredictionService(estimator)
-    prediction = service.make_prediction(request)
+    prediction = service.make_prediction(
+        prediction_request=request, transaction_id=int(transaction_id)
+    )
 
     return PredictionResponse(
         transaction_id=transaction_id, transaction_to_block=prediction

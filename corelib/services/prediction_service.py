@@ -22,7 +22,9 @@ class PredictionService:
         """Instantiate the prediction service."""
         self.estimator = estimator
 
-    def make_prediction(self, prediction_request: PredictionRequest) -> float:
+    def make_prediction(
+        self, prediction_request: PredictionRequest, transaction_id: int
+    ) -> float:
         """Generate predictions using the estimator.
 
         Args:
@@ -34,7 +36,9 @@ class PredictionService:
                 prediction.
         """
         logger.info(f"features: {prediction_request}")
-        data = pd.DataFrame(jsonable_encoder(prediction_request), index=[0])
+        data = pd.DataFrame(
+            jsonable_encoder(prediction_request), index=[transaction_id]
+        )
 
         data.tx_datetime = pd.to_datetime(data.tx_datetime, unit="ms")
         results = self.estimator.predict(data=data)
