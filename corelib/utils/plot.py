@@ -260,7 +260,8 @@ def plot_combined_precision_recall(
     ax1.plot(
         [0, 1],
         [pr_auc_random, pr_auc_random],
-        "k--",
+        color="#93c47dff",
+        linestyle="--",
         label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
     )
     ax1.legend(loc="best")
@@ -275,7 +276,7 @@ def plot_combined_precision_recall(
 
     # Add vertical line to the plot at the threshold where precision is closest
     # to target precision
-    ax2.axvline(x=threshold_target_precision, color="g", linestyle="--")
+    ax2.axvline(x=threshold_target_precision, color="black", linestyle="--")
     _text = (
         f"Threshold for {target_precision*100}%"
         f" Precision: {threshold_target_precision:.2f}"
