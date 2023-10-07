@@ -242,6 +242,12 @@ With hyperparameter optimization
  python train.py --do-hpo 
  ```
 
+### Run notebook service
+With hyperparameter optimization
+```zsh
+ jupyter notebook 
+ ```
+
 Important notes:
 
 * Generating the training data is time intensive; all the generated artifacts are stored in the `.cachedor` path using the utils module.
