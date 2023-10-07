@@ -59,7 +59,6 @@ class MLEstimator(Estimator):
 
         return test_results
 
-    @utils.timer
     def fit(
         self, data: pd.DataFrame, hyper_parameters: Dict[str, Any]
     ) -> None:
@@ -105,7 +104,6 @@ class MLEstimator(Estimator):
             scores=self.algorithm.get_scores(features=features),
         )
 
-    @utils.timer
     def evaluate(
         self,
         data: pd.DataFrame,
@@ -149,6 +147,7 @@ class MLEstimator(Estimator):
         )
         return results
 
+    @utils.timer
     def optimize_and_fit(
         self,
         data: pd.DataFrame,

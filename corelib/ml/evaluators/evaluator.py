@@ -56,7 +56,6 @@ class Evaluator(ABC):
         raise NotImplementedError
 
     @staticmethod
-    @utils.timer
     def hash_data(data: pd.DataFrame) -> str:
         """Hash data for tracking purposes.
 
