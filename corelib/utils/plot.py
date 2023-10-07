@@ -6,6 +6,7 @@ Created on: 6/10/23
 Licence,
 """
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from numpy.typing import ArrayLike
@@ -127,7 +128,7 @@ def plot_precision_recall_curve(
     """
     pr_curve, ax = plt.subplots(figsize=(5, 5))
     ax.step(recall, precision, label=f"AP-AUC Model = {round(pr_auc, 3)}")
-    ax.set_title("Precision-Recall Curve Test Data", fontsize=15)
+    ax.set_title("Precision-Recall Curve Test Data", fontsize=12)
     ax.grid(True, which="both", linestyle="--", linewidth=0.5)
     ax.set_xlim([-0.01, 1.01])
     ax.set_ylim([-0.01, 1.01])
@@ -143,4 +144,71 @@ def plot_precision_recall_curve(
         label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
     )
     ax.legend(loc="upper right")
+    plt.show()
+
+
+def plot_precision_recall_with_thresholds(
+    precision: ArrayLike,
+    recall: ArrayLike,
+    thresholds: ArrayLike,
+    target_precision: float = 0.8,
+) -> None:
+    """Plot Precision vs Recall for different thresholds.
+
+    Args:
+        precision: ArrayLike
+            Precision values.
+        recall: ArrayLike
+            Recall values.
+        thresholds: ArrayLike
+            Threshold values corresponding to precision and recall values.
+        target_precision: float = 0.8
+            Target precision.
+
+    Returns:
+        None
+    """
+    # Set up the figure and axis
+    fig, ax = plt.subplots(
+        figsize=(5, 5)
+    )  # Adjusted the size to ensure space for legend
+
+    # Plot Precision and Recall curves
+    ax.plot(thresholds, precision[:-1], "b--", label="Precision")
+    ax.plot(thresholds, recall[:-1], "r--", label="Recall")
+
+    # Find threshold closest to 80% precision
+    close_80_precision = np.argmin(np.abs(precision - target_precision))
+    threshold_80_precision = thresholds[close_80_precision]
+
+    # Add vertical line to the plot at the threshold where precision is closest
+    # to 80%
+    _label = (
+        f"Threshold for {target_precision*100}%"
+        f" Precision: {threshold_80_precision:.2f}"
+    )
+    ax.axvline(
+        x=threshold_80_precision, color="g", linestyle="--", label=_label
+    )
+
+    # Configure axis and plot properties
+    ax.set_title("Precision vs Recall for different thresholds", fontsize=12)
+    ax.set_xlabel("Threshold", fontsize=10)
+    ax.set_ylabel("Value", fontsize=10)
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+    ax.set_xlim([min(thresholds), max(thresholds)])
+    ax.set_ylim([0, 1])
+
+    # Place the legend below the plot and span it across the width
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.15),
+        ncol=3,
+        borderaxespad=0.0,
+        edgecolor="black",
+    )
+
+    fig.tight_layout(pad=2.0)  # To ensure there's space for the legend
+
+    # Show the plot
     plt.show()

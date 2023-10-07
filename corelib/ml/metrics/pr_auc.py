@@ -21,7 +21,10 @@ from corelib.ml.metrics.metric import (
     Results,
     TrueValues,
 )
-from corelib.utils.plot import plot_precision_recall_curve
+from corelib.utils.plot import (
+    plot_precision_recall_curve,
+    plot_precision_recall_with_thresholds,
+)
 
 
 class PRAUCScore(Metric):
@@ -67,6 +70,9 @@ class PRAUCScore(Metric):
                 recall=recall[::-1],
                 pr_auc=score,
                 pr_auc_random=true_values.tx_fraud.mean().values[0],
+            )
+            plot_precision_recall_with_thresholds(
+                precision=precision, recall=recall, thresholds=thresholds
             )
 
         return score
