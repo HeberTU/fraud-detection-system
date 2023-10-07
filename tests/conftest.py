@@ -102,20 +102,17 @@ def prediction_request() -> PredictionRequest:
         ),  # current time as Unix timestamp in milliseconds
         tx_amount=150.75,
         customer_id_mean_tx_amount_1_days=125.50,
-        customer_id_count_tx_amount_1_days=3,
         customer_id_mean_tx_amount_7_days=110.25,
-        customer_id_count_tx_amount_7_days=20,
         customer_id_mean_tx_amount_30_days=105.30,
-        customer_id_count_tx_amount_30_days=85,
+        customer_id_count_tx_amount_1_minutes=3,
+        customer_id_count_tx_amount_5_minutes=20,
+        customer_id_count_tx_amount_10_minutes=85,
         sector_id_mean_tx_fraud_1_days=0.05,
         sector_id_mean_tx_fraud_7_days=0.03,
         sector_id_mean_tx_fraud_30_days=0.02,
         customer_id_mean_tx_fraud_1_days=0.04,
         customer_id_mean_tx_fraud_7_days=0.02,
         customer_id_mean_tx_fraud_30_days=0.01,
-        time_since_last_tx=3600,  # e.g., 1 hour in seconds
-        customer_id_mean_time_since_last_tx_1_days=7200,  # e.g., 2 hours
-        customer_id_mean_time_since_last_tx_7_days=10800,  # e.g., 3 hours
     )
 
 
