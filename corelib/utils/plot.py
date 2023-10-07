@@ -243,7 +243,12 @@ def plot_combined_precision_recall(
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6))
 
     # Plot Precision-Recall curve on the first axis
-    ax1.step(recall, precision, label=f"AP-AUC Model = {round(pr_auc, 3)}")
+    ax1.step(
+        recall,
+        precision,
+        color="#ffd966ff",
+        label=f"AP-AUC Model = {round(pr_auc, 3)}",
+    )
     ax1.set_title("Precision-Recall Curve Test Data", fontsize=12)
     ax1.grid(True, which="both", linestyle="--", linewidth=0.5)
     ax1.set_xlim([-0.01, 1.01])
@@ -255,7 +260,7 @@ def plot_combined_precision_recall(
     ax1.plot(
         [0, 1],
         [pr_auc_random, pr_auc_random],
-        "r--",
+        "k--",
         label=f"AP-AUC Random = {round(pr_auc_random, 3)}",
     )
     ax1.legend(loc="best")
