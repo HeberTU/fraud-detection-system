@@ -31,13 +31,14 @@ def partial_dependency_plot(
         .assign(tx_fraud_delta=lambda df: df.tx_fraud / data.tx_fraud.mean())
     )
 
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig, ax1 = plt.subplots(figsize=(10, 4))
 
     # Creating a twin Axes sharing the xaxis
     ax2 = ax1.twinx()
 
     # Bar plot (trx) plotted first
-    sns.barplot(
+    # Bar plot (trx) plotted first
+    bar = sns.barplot(
         x=agg_data[feature_name],
         y=agg_data["trx"],
         ax=ax2,
@@ -50,9 +51,12 @@ def partial_dependency_plot(
         0, max(agg_data["trx"]) * 1.1
     )  # Adjust to ensure bars don't touch the top
 
+    # Get bar positions
+    bar_positions = bar.get_xticks()
+
     # Line plot (tx_fraud_delta) plotted secondly, so it's on top
     sns.lineplot(
-        x=agg_data[feature_name],
+        x=bar_positions,
         y=agg_data["tx_fraud_delta"],
         ax=ax1,
         label="E[fraud | hour] / E[fraud]",
@@ -72,3 +76,30 @@ def partial_dependency_plot(
     plt.tight_layout()
     plt.show()
     return agg_data
+
+
+def scatter_plot(
+    data: pd.DataFrame,
+    feature_name: str,
+    n_samples: int = 30000,
+) -> None:
+    """Plot a joint distribution with scatter plot in the center.
+
+    Args:
+        data: pd.DataFrame.
+            Data Frame containing the data to analyze.
+        feature_name: str
+            feature name.
+        n_samples: int = 30000
+            Number of samples.
+    """
+    fig, ax = plt.subplots(figsize=(10, 4))
+    sns.scatterplot(
+        data=data.sample(n_samples, random_state=0),
+        # data=trx.sample(10000),
+        x=feature_name,
+        y="tx_fraud",
+    )
+    ax.set_title(f"Partial dependence on {feature_name}")
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.show()
