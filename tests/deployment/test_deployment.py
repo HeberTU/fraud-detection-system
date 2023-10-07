@@ -49,3 +49,6 @@ def test_prediction_match_training(artifact_repo: ArtifactRepo):
 
         assert "transaction_id" in response_json
         assert "transaction_to_block" in response_json
+        assert request_payload.get("predicted") == int(
+            response_json.get("transaction_to_block")
+        )
