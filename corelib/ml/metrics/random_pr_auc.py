@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Precision-Recall Area Under the Curve.
+"""Area Under the Precision-Recall Curve for a random classifier.
 
 Created on: 7/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
@@ -11,11 +11,6 @@ from typing import (
     Optional,
 )
 
-from sklearn.metrics import (
-    auc,
-    precision_recall_curve,
-)
-
 from corelib.ml.metrics.metric import (
     Metric,
     Results,
@@ -23,14 +18,14 @@ from corelib.ml.metrics.metric import (
 )
 
 
-class PRAUCScore(Metric):
-    """Area Under the Precision-Recall Curve."""
+class RandomPRAUCScore(Metric):
+    """Area Under the Precision-Recall Curve for a random classifier."""
 
-    name: str = "pr_auc_score"
+    name: str = "random_pr_auc_score"
     params: Optional[Dict[str, Any]] = None
 
     def measure(self, results: Results, true_values: TrueValues) -> float:
-        """Compute Area Under the Precision-Recall Curve.
+        """Compute PR-AUC for a random classifier.
 
         Args:
             results: Results
@@ -45,12 +40,4 @@ class PRAUCScore(Metric):
         if not self.params:
             self.params = {}
 
-        precision, recall, thresholds = precision_recall_curve(
-            y_true=true_values.tx_fraud,
-            probas_pred=results.scores,
-            **self.params,
-        )
-
-        score = auc(x=recall, y=precision)
-
-        return score
+        return true_values.tx_fraud.mean()

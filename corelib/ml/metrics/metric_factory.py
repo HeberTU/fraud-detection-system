@@ -14,6 +14,7 @@ from corelib.ml.metrics.card_precision_top_k import CardPrecisionTopK
 from corelib.ml.metrics.metric import Metric
 from corelib.ml.metrics.perf_card_precision_top_k import PerfCardPrecisionTopK
 from corelib.ml.metrics.pr_auc import PRAUCScore
+from corelib.ml.metrics.random_pr_auc import RandomPRAUCScore
 from corelib.ml.metrics.roc_auc import ROCAUCScore
 
 
@@ -25,6 +26,7 @@ class MetricType(str, enum.Enum):
     CARD_PRECISION_TOP_K: MetricType = "CARD_PRECISION_TOP_K"
     PERFECT_CARD_PRECISION_TOP_K: MetricType = "PERFECT_CARD_PRECISION_TOP_K"
     PR_AUC: MetricType = "PR_AUC"
+    RANDOM_PR_AUC: MetricType = "RANDOM_PR_AUC"
 
 
 class MetricFactory:
@@ -38,6 +40,7 @@ class MetricFactory:
             MetricType.CARD_PRECISION_TOP_K: CardPrecisionTopK,
             MetricType.PERFECT_CARD_PRECISION_TOP_K: PerfCardPrecisionTopK,
             MetricType.PR_AUC: PRAUCScore,
+            MetricType.RANDOM_PR_AUC: RandomPRAUCScore,
         }
 
     def create(self, metric_type: MetricType) -> Metric:
