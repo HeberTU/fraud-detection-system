@@ -165,6 +165,9 @@ class Estimator(ABC):
         """
         integration_test_set["predicted"] = self.predict(
             data=integration_test_set
+        ).predictions
+        integration_test_set["scores"] = self.predict(
+            data=integration_test_set
         ).scores
 
         artifact_repo = ArtifactRepo(

@@ -25,6 +25,7 @@ from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
     LightGBMParams,
 )
+from corelib.ml.artifact_repositories import ArtifactRepo
 from corelib.ml.transformers.transformer_chain import TransformerChainFactory
 from corelib.services.contracts import PredictionRequest
 
@@ -145,3 +146,10 @@ def mock_settings(tmp_path) -> None:
     """Mock the ASSETS_PATH with tmp_path for testing purposes."""
     with patch("corelib.config.settings.ASSETS_PATH", tmp_path):
         yield
+
+
+@pytest.fixture
+def artifact_repo(request: FixtureRequest) -> ArtifactRepo:
+    """Get artifact repo for deployment."""
+    algorithm_type = request.param.get("algorithm_type")
+    return ArtifactRepo.load_from_assets(algorithm_type=algorithm_type)

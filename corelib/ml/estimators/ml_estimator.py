@@ -55,7 +55,9 @@ class MLEstimator(Estimator):
             plot_results=True,
         )
 
-        self.set_model_artifacts(integration_test_set=test_data.sample(n=1000))
+        self.set_model_artifacts(
+            integration_test_set=test_data.sample(n=1000, random_state=0)
+        )
 
         return test_results
 
