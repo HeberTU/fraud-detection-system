@@ -69,8 +69,7 @@ def log_model_results(logger: loguru._Logger, results: Dict[str, Any]) -> None:
          'estimator_params', and 'hashed_data'.
 
     Returns:
-        None: The function logs the formatted results and does not return a
-        value.
+        None
     """
     log_str = format_section(
         "Scores", {k: round(v, 3) for k, v in results["scores"].items()}
