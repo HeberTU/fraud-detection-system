@@ -29,7 +29,7 @@ class LightGBM(Algorithm):
         hpo_params: Dict[str, skopt.space.Dimension],
         num_threads: int = -1,
         verbose: int = -1,
-        threshold: float = 0.7,
+        threshold: float = 0.8,
     ):
         """Instantiate a Light gbm wrapper.
 

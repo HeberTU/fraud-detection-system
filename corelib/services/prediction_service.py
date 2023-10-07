@@ -8,8 +8,11 @@ Licence,
 import pandas as pd
 from fastapi.encoders import jsonable_encoder
 
+from corelib import utils
 from corelib.ml.estimators.estimator import Estimator
 from corelib.services.contracts import PredictionRequest
+
+logger = utils.get_logger()
 
 
 class PredictionService:
@@ -30,7 +33,9 @@ class PredictionService:
             float
                 prediction.
         """
+        logger.info(f"features: {prediction_request}")
         data = pd.DataFrame(jsonable_encoder(prediction_request), index=[0])
-        data.tx_datetime = pd.Timestamp(data.tx_datetime, unit="ms")
+
+        data.tx_datetime = pd.to_datetime(data.tx_datetime, unit="ms")
         results = self.estimator.predict(data=data)
-        return results.scores
+        return results.predictions
