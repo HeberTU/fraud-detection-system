@@ -7,13 +7,16 @@ Licence,
 """
 import pandas as pd
 import pytest
+import requests
 from fastapi.testclient import TestClient
+from pytest_benchmark.fixture import BenchmarkFixture
 
-from corelib.entrypoints.api import app
+from corelib import utils
 from corelib.ml.algorithms.algorithm_factory import AlgorithmType
 from corelib.ml.artifact_repositories import ArtifactRepo
+from corelib.services.contracts import PredictionRequest
 
-client = TestClient(app)
+logger = utils.get_logger()
 
 
 @pytest.mark.deployment
@@ -26,7 +29,9 @@ client = TestClient(app)
     ],
     indirect=True,
 )
-def test_prediction_match_training(artifact_repo: ArtifactRepo):
+def test_prediction_match_training(
+    artifact_repo: ArtifactRepo, client_test: TestClient
+):
     """Test deployment model."""
     integration_test_set = artifact_repo.integration_test_set
     integration_test_set = integration_test_set.reset_index()
@@ -39,7 +44,7 @@ def test_prediction_match_training(artifact_repo: ArtifactRepo):
 
     for request_payload in integration_test_dict:
 
-        response = client.post(
+        response = client_test.post(
             f"/model/v0/prediction/{request_payload.get('transaction_id')}",
             json=request_payload,
         )
@@ -52,3 +57,39 @@ def test_prediction_match_training(artifact_repo: ArtifactRepo):
         assert request_payload.get("predicted") == int(
             response_json.get("transaction_to_block")
         )
+
+
+@pytest.mark.benchmark(group="standard_invocation", max_time=5)
+def test_latency_sla(
+    benchmark: BenchmarkFixture,
+    server: None,
+    prediction_request: PredictionRequest,
+) -> None:
+    """Test latency for SLA."""
+    request_payload = prediction_request.__dict__
+
+    def post_request() -> None:
+        """Invoke API."""
+        requests.post(
+            url="http://127.0.0.1:8000/model/v0/prediction/1",
+            json=request_payload,
+        )
+
+    benchmark(post_request)
+
+    average_latency_threshold = 0.07
+    logger.info(f"Mean Latency: {benchmark.stats.stats.mean}")
+    logger.info(f"Max Latency: {benchmark.stats.stats.max}")
+    if benchmark.stats.stats.mean > average_latency_threshold:
+        msg = (
+            "Failed normal benchmark - Average latency higher "
+            f"than {average_latency_threshold * 1000}ms"
+        )
+        pytest.fail(msg)
+    max_latency_threshold = 0.5
+    if benchmark.stats.stats.max > max_latency_threshold:
+        msg = (
+            f"Failed normal benchmark - Max latency higher "
+            f"than {max_latency_threshold*1000}ms"
+        )
+        pytest.fail(msg)

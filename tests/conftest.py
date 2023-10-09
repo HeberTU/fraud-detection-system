@@ -5,21 +5,24 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+import time
 from datetime import datetime
+from multiprocessing import Process
 from typing import (
     Any,
     Dict,
 )
 from unittest.mock import patch
 
-import httpx
 import pandas as pd
 import pytest
+import uvicorn
 from _pytest.fixtures import FixtureRequest
+from fastapi.testclient import TestClient
 from pandera.typing import Series
 
 from corelib.data_schemas.data_schema_factory import DataSchemaFactory
-from corelib.entrypoints.api import app
+from corelib.entrypoints.api import get_app
 from corelib.ml.algorithms.algorithm_factory import AlgorithmFactory
 from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
@@ -88,12 +91,6 @@ def algorithm_artifacts() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def client() -> httpx.AsyncClient:
-    """Get API for testing."""
-    return httpx.AsyncClient(app=app, base_url="http://test")
-
-
-@pytest.fixture
 def prediction_request() -> PredictionRequest:
     """Get prediction request instance."""
     return PredictionRequest(
@@ -150,3 +147,29 @@ def artifact_repo(request: FixtureRequest) -> ArtifactRepo:
     """Get artifact repo for deployment."""
     algorithm_type = request.param.get("algorithm_type")
     return ArtifactRepo.load_from_assets(algorithm_type=algorithm_type)
+
+
+@pytest.fixture
+def client_test() -> TestClient:
+    """Instantiate a test client."""
+    return TestClient(get_app())
+
+
+def start_server() -> None:
+    """Start prediction server."""
+    uvicorn.run(get_app, host="0.0.0.0", port=8000)
+
+
+@pytest.fixture(scope="module")
+def server() -> None:
+    """Up prediction Server."""
+    # Runs the FastAPI app in a separate process, ensuring it doesn't block the
+    # test suite.
+    process = Process(target=start_server)
+    process.start()
+    # ensures that the server starts before any test that uses this fixture and
+    # stops after the test completes.
+    time.sleep(5)
+    yield
+    process.terminate()
+    process.join()
