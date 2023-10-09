@@ -10,8 +10,8 @@ from fastapi import FastAPI
 from corelib.entrypoints.routes import get_router
 
 
-def get_api() -> FastAPI:
+def get_app() -> FastAPI:
     """Get API."""
-    app = FastAPI
+    app = FastAPI()
     app.include_router(get_router())
     return app

@@ -12,7 +12,6 @@ from typing import (
 )
 from unittest.mock import patch
 
-import httpx
 import pandas as pd
 import pytest
 from _pytest.fixtures import FixtureRequest
@@ -20,7 +19,7 @@ from fastapi.testclient import TestClient
 from pandera.typing import Series
 
 from corelib.data_schemas.data_schema_factory import DataSchemaFactory
-from corelib.entrypoints.api import app
+from corelib.entrypoints.api import get_app
 from corelib.ml.algorithms.algorithm_factory import AlgorithmFactory
 from corelib.ml.algorithms.algorithm_params import (
     LightGBMHPOParams,
@@ -89,12 +88,6 @@ def algorithm_artifacts() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def client() -> httpx.AsyncClient:
-    """Get API for testing."""
-    return httpx.AsyncClient(app=app, base_url="http://test")
-
-
-@pytest.fixture
 def prediction_request() -> PredictionRequest:
     """Get prediction request instance."""
     return PredictionRequest(
@@ -154,6 +147,6 @@ def artifact_repo(request: FixtureRequest) -> ArtifactRepo:
 
 
 @pytest.fixture
-def client_entrypoint() -> TestClient:
+def client_test() -> TestClient:
     """Instantiate a test client."""
-    return TestClient(app)
+    return TestClient(get_app())

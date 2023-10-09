@@ -24,7 +24,7 @@ from corelib.ml.artifact_repositories import ArtifactRepo
     indirect=True,
 )
 def test_prediction_match_training(
-    artifact_repo: ArtifactRepo, client_entrypoint: TestClient
+    artifact_repo: ArtifactRepo, prod_client: TestClient
 ):
     """Test deployment model."""
     integration_test_set = artifact_repo.integration_test_set
@@ -38,7 +38,7 @@ def test_prediction_match_training(
 
     for request_payload in integration_test_dict:
 
-        response = client_entrypoint.post(
+        response = prod_client.post(
             f"/model/v0/prediction/{request_payload.get('transaction_id')}",
             json=request_payload,
         )
