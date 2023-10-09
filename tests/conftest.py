@@ -16,6 +16,7 @@ import httpx
 import pandas as pd
 import pytest
 from _pytest.fixtures import FixtureRequest
+from fastapi.testclient import TestClient
 from pandera.typing import Series
 
 from corelib.data_schemas.data_schema_factory import DataSchemaFactory
@@ -150,3 +151,9 @@ def artifact_repo(request: FixtureRequest) -> ArtifactRepo:
     """Get artifact repo for deployment."""
     algorithm_type = request.param.get("algorithm_type")
     return ArtifactRepo.load_from_assets(algorithm_type=algorithm_type)
+
+
+@pytest.fixture
+def client_entrypoint() -> TestClient:
+    """Instantiate a test client."""
+    return TestClient(app)

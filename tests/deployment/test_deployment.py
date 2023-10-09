@@ -9,11 +9,8 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
-from corelib.entrypoints.api import app
 from corelib.ml.algorithms.algorithm_factory import AlgorithmType
 from corelib.ml.artifact_repositories import ArtifactRepo
-
-client = TestClient(app)
 
 
 @pytest.mark.deployment
@@ -26,7 +23,9 @@ client = TestClient(app)
     ],
     indirect=True,
 )
-def test_prediction_match_training(artifact_repo: ArtifactRepo):
+def test_prediction_match_training(
+    artifact_repo: ArtifactRepo, client_entrypoint: TestClient
+):
     """Test deployment model."""
     integration_test_set = artifact_repo.integration_test_set
     integration_test_set = integration_test_set.reset_index()
@@ -39,7 +38,7 @@ def test_prediction_match_training(artifact_repo: ArtifactRepo):
 
     for request_payload in integration_test_dict:
 
-        response = client.post(
+        response = client_entrypoint.post(
             f"/model/v0/prediction/{request_payload.get('transaction_id')}",
             json=request_payload,
         )
