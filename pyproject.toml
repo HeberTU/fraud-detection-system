@@ -24,6 +24,7 @@ uvicorn = "^0.23.2"
 httpx = "^0.25.0"
 matplotlib = "3.7.3"
 seaborn = "^0.13.0"
+pytest-benchmark = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
