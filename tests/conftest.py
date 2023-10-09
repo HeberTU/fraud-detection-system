@@ -5,7 +5,9 @@ Created on: 1/10/23
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+import time
 from datetime import datetime
+from multiprocessing import Process
 from typing import (
     Any,
     Dict,
@@ -14,6 +16,7 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
+import uvicorn
 from _pytest.fixtures import FixtureRequest
 from fastapi.testclient import TestClient
 from pandera.typing import Series
@@ -150,3 +153,23 @@ def artifact_repo(request: FixtureRequest) -> ArtifactRepo:
 def client_test() -> TestClient:
     """Instantiate a test client."""
     return TestClient(get_app())
+
+
+def start_server() -> None:
+    """Start prediction server."""
+    uvicorn.run(get_app, host="0.0.0.0", port=8000)
+
+
+@pytest.fixture(scope="module")
+def server() -> None:
+    """Up prediction Server."""
+    # Runs the FastAPI app in a separate process, ensuring it doesn't block the
+    # test suite.
+    process = Process(target=start_server)
+    process.start()
+    # ensures that the server starts before any test that uses this fixture and
+    # stops after the test completes.
+    time.sleep(5)
+    yield
+    process.terminate()
+    process.join()
