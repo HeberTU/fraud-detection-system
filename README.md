@@ -243,7 +243,7 @@ With hyperparameter optimization
  ```
 
 ### Run notebook service
-With hyperparameter optimization
+
 ```zsh
  jupyter notebook 
  ```
