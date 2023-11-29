@@ -100,7 +100,7 @@ def aggregate_feature_by_time_window(
     grouping_column: str,
     delay_period: int = 0,
 ) -> pd.DataFrame:
-    """Aggregate a feature by the given time window.
+    """Aggregate a feature by the given time and window.
 
     Args:
         data: pd.DataFrame
